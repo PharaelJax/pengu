@@ -368,7 +368,7 @@ textarea::placeholder{color:var(--text3)}
 <div class="copy-toast" id="copy-toast">✅ Copied to clipboard!</div>
 
 <script>
-const API_URL="https://api.anthropic.com/v1/messages",MODEL="claude-sonnet-4-20250514",MAX_TOKENS=4000,WARN_WORDS=800;
+const API_URL="/api/chat",MODEL="claude-sonnet-4-20250514",MAX_TOKENS=4000,WARN_WORDS=800;
 const LANGS=["Afrikaans","Albanian","Amharic","Arabic","Armenian","Azerbaijani","Basque","Bengali","Bosnian","Bulgarian","Catalan","Chinese (Simplified)","Chinese (Traditional)","Croatian","Czech","Danish","Dutch","Esperanto","Estonian","Finnish","French","Galician","Georgian","German","Greek","Gujarati","Haitian Creole","Hausa","Hebrew","Hindi","Hungarian","Icelandic","Indonesian","Irish","Italian","Japanese","Javanese","Kannada","Kazakh","Khmer","Korean","Kurdish","Latin","Latvian","Lithuanian","Macedonian","Malay","Malayalam","Maltese","Maori","Marathi","Mongolian","Nepali","Norwegian","Pashto","Persian","Polish","Portuguese","Punjabi","Romanian","Russian","Samoan","Serbian","Sindhi","Sinhala","Slovak","Slovenian","Somali","Spanish","Swahili","Swedish","Tagalog","Tajik","Tamil","Telugu","Thai","Turkish","Ukrainian","Urdu","Uzbek","Vietnamese","Welsh","Xhosa","Yoruba","Zulu"];
 
 // State
@@ -579,9 +579,9 @@ renderHistory();
 // API
 function showLoader(id,msg){document.getElementById(id).innerHTML=`<div class="loader show"><div class="spinner"></div><span>${msg}</span></div>`}
 async function callClaude(prompt){
-  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,max_tokens:MAX_TOKENS,messages:[{role:'user',content:prompt}]})});
+  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,max_tokens:MAX_TOKENS})});
   const data=await res.json();
-  if(data.error)throw new Error(data.error.message);
+  if(data.error)throw new Error(data.error.message||data.error);
   return data.content.map(b=>b.text||'').join('');
 }
 
