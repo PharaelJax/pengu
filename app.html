@@ -579,7 +579,8 @@ renderHistory();
 // API
 function showLoader(id,msg){document.getElementById(id).innerHTML=`<div class="loader show"><div class="spinner"></div><span>${msg}</span></div>`}
 async function callClaude(prompt){
-  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,max_tokens:MAX_TOKENS})});
+  const safe=prompt.replace(/[\u0000-\u001F\u007F]/g,' ');
+  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:safe,max_tokens:MAX_TOKENS})});
   const data=await res.json();
   if(data.error)throw new Error(data.error.message||data.error);
   return data.content.map(b=>b.text||'').join('');
