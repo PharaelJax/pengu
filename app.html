@@ -601,7 +601,25 @@ async function runHumanize(){
   document.getElementById('diff-toggle').classList.remove('on');
   showLoader('h-output-area','Humanizing your text...');
   try{
-    const result=await callClaude(`You are a professional writing editor. Rewrite the following AI-generated text to sound authentically human.\nTone: ${toneDesc}\nStyle: ${style}\nStrength: ${strength} (${strength==='light'?'minor tweaks':strength==='moderate'?'moderate rewording':'thorough rewrite with natural imperfections and varied rhythm'})\nReturn ONLY the rewritten text, no preamble.\n\n${txt}`);
+    const result=await callClaude(`You are an expert at rewriting AI-generated text to sound 100% authentically human. Your goal is to make the text completely undetectable as AI-written.
+
+Tone: ${toneDesc}
+Style: ${style}
+Strength: ${strength}
+
+Apply ALL of these humanization techniques aggressively:
+1. VARY sentence length dramatically — mix very short punchy sentences with longer flowing ones
+2. ADD natural imperfections — occasional informal phrasing, contractions (don't, can't, it's, you'll)
+3. REMOVE all AI patterns — no "Furthermore", "Moreover", "In conclusion", "It is worth noting", "Delve", "Crucial", "Straightforward"
+4. ADD personal voice — opinions, mild emphasis, natural asides
+5. USE conversational transitions — "So", "But here's the thing", "And honestly", "Look," "The thing is"
+6. BREAK perfect grammar occasionally — start sentences with And or But, use dashes — like this
+7. ADD specific concrete details instead of vague generalities
+8. VARY paragraph length — some one-liners, some longer
+9. REMOVE robotic repetition and overly balanced structure
+10. MAKE it sound like a real person wrote this in their natural voice
+
+The output must pass AI detection tools and score 85%+ human. Return ONLY the rewritten text, nothing else.\n\n${txt}`);
     origText=txt;humanizedText=result;
     document.getElementById('h-output-area').innerHTML=`<div class="output-text" id="h-output-text">${escHtml(result)}</div>`;
     document.getElementById('h-out-count').textContent=wordCount(result)+' words';
