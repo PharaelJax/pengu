@@ -3,515 +3,605 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HumanizeAI Suite</title>
+<title>Pengu — Write Like a Human</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f1117;--bg2:#1a1d2e;--bg3:#0d0f18;
-  --border:#2d3148;--border2:#3d4168;
-  --text:#e2e8f0;--text2:#9ca3af;--text3:#6b7280;
-  --accent:#6c63ff;--accent2:#a78bfa;--accent3:#c4b5fd;
-  --green:#34d399;--red:#f87171;--amber:#fbbf24;
-  --radius:12px;--radius-sm:8px;--radius-xs:6px;
+  --bg:#07080f;--bg2:#0d0f1a;--bg3:#12152a;--bg4:#1a1d35;
+  --glass:#ffffff08;--glass2:#ffffff12;--glass3:#ffffff18;
+  --border:#ffffff10;--border2:#ffffff20;--border3:#ffffff30;
+  --text:#f0f2ff;--text2:#9ba3c4;--text3:#5a6480;
+  --p1:#7B61FF;--p2:#4F8EF7;--p3:#38D9A9;
+  --grad:linear-gradient(135deg,#7B61FF,#4F8EF7);
+  --grad2:linear-gradient(135deg,#4F8EF7,#38D9A9);
+  --grad3:linear-gradient(135deg,#7B61FF,#38D9A9);
+  --red:#ff6b8a;--amber:#ffb86c;--green:#38D9A9;
+  --radius:16px;--radius-sm:10px;--radius-xs:8px;
+  --shadow:0 8px 32px #00000060;
+  --glow:0 0 40px #7B61FF20;
 }
-.light{
-  --bg:#f8f9fc;--bg2:#ffffff;--bg3:#f0f2f8;
-  --border:#e2e6f0;--border2:#c8cde0;
-  --text:#1e2035;--text2:#4b5563;--text3:#9ca3af;
-  --accent:#6c63ff;--accent2:#7c3aed;--accent3:#5b21b6;
-}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
-.header{background:var(--bg2);border-bottom:1px solid var(--border);padding:13px 22px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100}
-.logo{width:33px;height:33px;background:linear-gradient(135deg,#6c63ff,#a78bfa);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.header h1{font-size:16px;font-weight:700;color:var(--text)}
-.header h1 span{font-size:12px;color:var(--text3);font-weight:400;margin-left:4px}
-.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.badge{background:#6c63ff22;color:var(--accent2);font-size:11px;padding:3px 8px;border-radius:20px;border:1px solid #6c63ff44}
-.theme-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-xs);padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2);transition:all .2s}
-.theme-btn:hover{border-color:var(--accent);color:var(--accent2)}
-.hist-btn{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-xs);padding:5px 10px;cursor:pointer;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .2s}
-.hist-btn:hover{border-color:var(--accent);color:var(--accent2)}
-.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:0 22px;gap:2px;overflow-x:auto}
-.tab{padding:10px 17px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;color:var(--text3);transition:all .2s;white-space:nowrap;display:flex;align-items:center;gap:5px}
-.tab:hover{color:var(--accent2)}
-.tab.active{color:var(--accent2);border-bottom-color:var(--accent)}
-.main{padding:16px 22px;max-width:1440px;margin:0 auto}
-.panel{display:none}.panel.active{display:block}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:background .3s,border-color .3s}
-.box-header{padding:10px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.box-title{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-textarea{width:100%;min-height:240px;background:transparent;border:none;padding:14px 15px;color:var(--text);font-size:14px;line-height:1.7;resize:vertical;outline:none;font-family:inherit}
-textarea::placeholder{color:var(--text3)}
-.output-text{padding:14px 15px;min-height:240px;font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap}
-.controls{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:13px 17px;margin-bottom:13px}
-.controls-row{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
-.ctrl-group{flex:1;min-width:160px}
-.ctrl-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:7px}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* BACKGROUND */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:drift 20s infinite ease-in-out}
+.orb1{width:600px;height:600px;background:#7B61FF;top:-200px;left:-200px;animation-delay:0s}
+.orb2{width:500px;height:500px;background:#4F8EF7;bottom:-200px;right:-100px;animation-delay:-7s}
+.orb3{width:400px;height:400px;background:#38D9A9;top:40%;left:40%;animation-delay:-14s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.05)}66%{transform:translate(-20px,40px) scale(.95)}}
+
+/* LAYOUT */
+.app{position:relative;z-index:1;display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:var(--glass);backdrop-filter:blur(20px);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:20px 0;transition:width .3s}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border)}
+.logo-icon{width:38px;height:38px;background:var(--grad);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 16px #7B61FF40}
+.logo-text{font-size:18px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-badge{font-size:9px;color:var(--text3);margin-top:1px}
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;color:var(--text3);font-size:13px;font-weight:500;border:1px solid transparent}
+.nav-item:hover{background:var(--glass2);color:var(--text);border-color:var(--border)}
+.nav-item.active{background:linear-gradient(135deg,#7B61FF20,#4F8EF720);color:var(--text);border-color:#7B61FF40}
+.nav-item .nav-icon{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.nav-item .nav-label{font-size:13px}
+.nav-item .nav-badge{margin-left:auto;background:var(--grad);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--border)}
+.theme-toggle{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text3);cursor:pointer;padding:8px 10px;border-radius:var(--radius-xs);background:var(--glass);border:1px solid var(--border);transition:all .2s;width:100%}
+.theme-toggle:hover{border-color:var(--border2);color:var(--text)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar-title{font-size:16px;font-weight:700;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.stat-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--glass2);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text2)}
+.stat-pill span{color:var(--p2);font-weight:600}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-track{background:transparent}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* PANELS */
+.panel{display:none;flex-direction:column;gap:20px;animation:fadeIn .3s ease}
+.panel.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* GLASS CARD */
+.card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.card-title{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text)}
+.card-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* CONTROLS */
+.controls-card{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+.controls-grid{display:flex;gap:20px;flex-wrap:wrap}
+.ctrl{flex:1;min-width:160px}
+.ctrl-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:8px;display:flex;align-items:center;gap:5px}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{padding:4px 11px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
-.chip:hover{border-color:var(--accent);color:var(--accent2)}
-.chip.active{background:#6c63ff22;border-color:var(--accent);color:var(--accent2);font-weight:600}
-.custom-tone-wrap{margin-top:8px}
-.custom-tone-input{width:100%;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text);font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
-.custom-tone-input:focus{border-color:var(--accent)}
-.custom-tone-input::placeholder{color:var(--text3)}
-.slider-row{display:flex;align-items:center;gap:10px;margin-top:4px}
-.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
-.slider-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:3px}
-.slider-val{font-size:13px;font-weight:600;color:var(--accent2);min-width:50px;text-align:right}
-.action-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 15px;border-top:1px solid var(--border);flex-wrap:wrap;gap:6px}
-.word-count{font-size:11px;color:var(--text3)}
-.readability-bar{display:flex;gap:12px;padding:8px 15px;border-top:1px solid var(--border);flex-wrap:wrap}
-.rb-item{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px}
-.rb-item span{color:var(--accent2);font-weight:600}
-.btn{padding:8px 17px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all .18s;border:none;display:flex;align-items:center;gap:6px}
-.btn-primary{background:linear-gradient(135deg,#6c63ff,#8b5cf6);color:#fff}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.btn-sm{padding:4px 10px;font-size:11px;background:var(--bg3);color:var(--text2);border:1px solid var(--border);border-radius:var(--radius-xs);cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;white-space:nowrap}
-.btn-sm:hover{background:var(--border);color:var(--text)}
-.btn-sm:disabled{opacity:.4;cursor:not-allowed}
-.btn-export{padding:4px 10px;font-size:11px;background:#6c63ff18;color:var(--accent2);border:1px solid #6c63ff44;border-radius:var(--radius-xs);cursor:pointer;display:flex;align-items:center;gap:4px;transition:all .15s;white-space:nowrap}
-.btn-export:hover{background:#6c63ff30}
-.btn-group{display:flex;gap:5px;flex-wrap:wrap}
-.run-bar{display:flex;justify-content:center;align-items:center;gap:10px;margin:13px 0}
-.undo-group{display:flex;gap:5px}
-.loader{display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:40px;color:var(--text3);font-size:13px}
+.chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--glass);color:var(--text3);font-size:12px;cursor:pointer;transition:all .2s;font-weight:500}
+.chip:hover{border-color:var(--p1);color:var(--text);background:var(--glass2)}
+.chip.active{background:linear-gradient(135deg,#7B61FF25,#4F8EF725);border-color:#7B61FF60;color:#c4b5fd;font-weight:600}
+.custom-tone{margin-top:8px}
+.custom-tone input{width:100%;padding:8px 12px;background:var(--glass2);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text);font-size:12px;outline:none;font-family:inherit;transition:border-color .2s}
+.custom-tone input:focus{border-color:var(--p1)}
+.custom-tone input::placeholder{color:var(--text3)}
+.strength-wrap{min-width:160px;max-width:200px}
+.strength-slider{display:flex;align-items:center;gap:10px;margin-top:6px}
+.strength-slider input[type=range]{flex:1;accent-color:var(--p1);height:4px}
+.strength-val{font-size:13px;font-weight:700;color:#c4b5fd;min-width:50px;text-align:right}
+.strength-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px}
+
+/* GRID */
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* TEXTAREA */
+textarea{width:100%;min-height:260px;background:transparent;border:none;padding:16px 18px;color:var(--text);font-size:14px;line-height:1.8;resize:vertical;outline:none;font-family:inherit}
+textarea::placeholder{color:var(--text3)}
+
+/* OUTPUT */
+.output-text{padding:16px 18px;min-height:260px;font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap}
+
+/* ACTION BAR */
+.action-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px;background:var(--glass)}
+.word-count{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:6px}
+.readability{font-size:11px;color:var(--text3);display:flex;gap:12px}
+.rb-stat{display:flex;align-items:center;gap:4px}
+.rb-stat span{font-weight:600}
+
+/* BUTTONS */
+.btn-group{display:flex;gap:6px;flex-wrap:wrap}
+.btn{padding:7px 14px;border-radius:var(--radius-xs);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:none;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-ghost{background:var(--glass2);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--glass3);color:var(--text);border-color:var(--border2)}
+.btn-ghost:disabled{opacity:.4;cursor:not-allowed}
+.btn-export{background:linear-gradient(135deg,#7B61FF15,#4F8EF715);color:#a78bfa;border:1px solid #7B61FF30}
+.btn-export:hover{background:linear-gradient(135deg,#7B61FF25,#4F8EF725);border-color:#7B61FF50}
+.btn-diff{background:var(--glass2);color:var(--text2);border:1px solid var(--border)}
+.btn-diff.on{background:linear-gradient(135deg,#7B61FF20,#4F8EF720);color:#a78bfa;border-color:#7B61FF40}
+
+/* RUN BAR */
+.run-bar{display:flex;align-items:center;justify-content:center;gap:12px}
+.btn-primary{padding:12px 32px;background:var(--grad);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px #7B61FF40}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px #7B61FF50}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.undo-group{display:flex;gap:6px}
+
+/* LOADER */
+.loader{display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:50px;color:var(--text3);font-size:13px}
 .loader.show{display:flex}
-.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.score-row{display:flex;gap:13px;margin-bottom:16px}
-.score-card{flex:1;background:var(--bg3);border-radius:10px;padding:13px;text-align:center;border:1px solid var(--border)}
-.score-num{font-size:32px;font-weight:800;margin-bottom:3px}
-.score-num.human{color:var(--green)}.score-num.ai{color:var(--red)}
+.loader-penguin{font-size:36px;animation:bounce .6s ease-in-out infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.loader-dots{display:flex;gap:6px}
+.loader-dot{width:8px;height:8px;border-radius:50%;background:var(--p1);animation:pulse 1.2s ease-in-out infinite}
+.loader-dot:nth-child(2){animation-delay:.2s;background:var(--p2)}
+.loader-dot:nth-child(3){animation-delay:.4s;background:var(--p3)}
+@keyframes pulse{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.2);opacity:1}}
+
+/* DETECT */
+.score-row{display:flex;gap:14px;margin-bottom:18px}
+.score-card{flex:1;background:var(--glass2);border-radius:var(--radius-sm);padding:16px;text-align:center;border:1px solid var(--border)}
+.score-num{font-size:36px;font-weight:800;margin-bottom:4px}
+.score-num.human{background:linear-gradient(135deg,#38D9A9,#4F8EF7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-num.ai{background:linear-gradient(135deg,#ff6b8a,#ffb86c);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .score-label{font-size:12px;color:var(--text3);font-weight:500}
-.bar-wrap{margin-bottom:16px}
-.bar-label-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text3);margin-bottom:5px}
-.progress-bar{height:11px;border-radius:6px;background:var(--border);overflow:hidden}
-.progress-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--green),var(--accent),var(--red));transition:width 1s ease}
-.verdict{background:var(--bg3);border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.6;color:var(--text2);border-left:3px solid var(--accent)}
-.disclaimer{font-size:11px;color:var(--text3);margin-top:10px;padding:8px 12px;background:var(--bg3);border-radius:var(--radius-xs);border:1px solid var(--border);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
-.proof-output{padding:14px 15px;min-height:240px;font-size:14px;line-height:1.8;color:var(--text)}
-.stats-row{display:flex;gap:7px;padding:8px 15px;border-top:1px solid var(--border);flex-wrap:wrap}
-.stat{background:var(--bg3);border-radius:var(--radius-xs);padding:4px 10px;font-size:12px;color:var(--text3)}
-.stat span{color:var(--accent2);font-weight:700;margin-left:4px}
-/* Diff */
-.diff-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;padding:4px 10px;border-radius:var(--radius-xs);background:var(--bg3);border:1px solid var(--border);transition:all .2s}
-.diff-toggle:hover{border-color:var(--accent);color:var(--accent2)}
-.diff-toggle.on{background:#6c63ff18;border-color:var(--accent);color:var(--accent2)}
-.diff-add{background:#0d2a1a;color:var(--green);border-radius:3px;padding:1px 2px}
-.diff-del{background:#2a0d0d;color:var(--red);text-decoration:line-through;border-radius:3px;padding:1px 2px}
-/* History panel */
-.hist-overlay{position:fixed;inset:0;background:#00000088;z-index:200;display:none;align-items:flex-start;justify-content:flex-end}
-.hist-overlay.open{display:flex}
-.hist-panel{background:var(--bg2);width:360px;height:100vh;border-left:1px solid var(--border);overflow-y:auto;padding:0}
-.hist-head{padding:16px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:1}
-.hist-head h2{font-size:15px;font-weight:700;color:var(--text)}
-.hist-empty{padding:40px 20px;text-align:center;color:var(--text3);font-size:13px}
-.hist-item{padding:13px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
-.hist-item:hover{background:var(--bg3)}
-.hist-item-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
-.hist-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:20px}
-.hist-tag.humanize{background:#6c63ff22;color:var(--accent2)}
-.hist-tag.proofread{background:#34d39922;color:var(--green)}
-.hist-tag.detect{background:#f87171;color:#fff;background:#f8717122}
-.hist-tag.translate{background:#fbbf2422;color:var(--amber)}
-.hist-time{font-size:11px;color:var(--text3)}
-.hist-preview{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
-/* Lang */
-.lang-select-wrap{position:relative;flex:1;min-width:180px}
-.lang-search{width:100%;padding:7px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
-.lang-search:focus{border-color:var(--accent)}
-.lang-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);max-height:200px;overflow-y:auto;z-index:50;display:none;box-shadow:0 8px 24px #00000040}
+.progress-wrap{margin-bottom:18px}
+.progress-labels{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}
+.progress-track{height:10px;border-radius:5px;background:var(--glass2);overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,#38D9A9,#7B61FF,#ff6b8a);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.verdict-card{background:var(--glass2);border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;line-height:1.7;color:var(--text2);border-left:3px solid var(--p1);margin-bottom:14px}
+.signals-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.signal-box{background:var(--glass2);border-radius:var(--radius-sm);padding:12px;border-top:2px solid}
+.signal-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.signal-item{font-size:12px;color:var(--text2);padding:4px 0;border-bottom:1px solid var(--border)}
+.signal-item:last-child{border-bottom:none}
+.disclaimer{font-size:11px;color:var(--text3);padding:10px 14px;background:var(--glass);border-radius:var(--radius-xs);border:1px solid var(--border);margin-top:12px;line-height:1.6}
+
+/* PROOF */
+.proof-output{padding:16px 18px;min-height:260px;font-size:14px;line-height:1.8;color:var(--text)}
+.error-item{margin-top:8px;padding:8px 12px;background:var(--glass2);border-radius:var(--radius-xs);border-left:3px solid var(--red);font-size:13px}
+.sugg-item{margin-top:6px;padding:8px 12px;background:var(--glass2);border-radius:var(--radius-xs);border-left:3px solid var(--amber);font-size:13px;color:var(--text2)}
+.proof-stats{display:flex;gap:8px;padding:10px 18px;border-top:1px solid var(--border);flex-wrap:wrap}
+.proof-stat{background:var(--glass2);border-radius:var(--radius-xs);padding:5px 12px;font-size:12px;color:var(--text3);border:1px solid var(--border)}
+.proof-stat span{color:#a78bfa;font-weight:700;margin-left:4px}
+
+/* TRANSLATE */
+.lang-wrap{position:relative;flex:1;min-width:180px}
+.lang-input{width:100%;padding:8px 12px;background:var(--glass2);border:1px solid var(--border);border-radius:var(--radius-xs);color:var(--text);font-size:13px;outline:none;transition:border-color .2s}
+.lang-input:focus{border-color:var(--p1)}
+.lang-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#12152a;border:1px solid var(--border2);border-radius:var(--radius-sm);max-height:200px;overflow-y:auto;z-index:50;display:none;box-shadow:var(--shadow)}
 .lang-dropdown.open{display:block}
-.lang-option{padding:7px 13px;font-size:13px;color:var(--text2);cursor:pointer;transition:background .15s}
-.lang-option:hover,.lang-option.selected{background:#6c63ff22;color:var(--accent2)}
-.detected-badge{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
-.warn-msg{font-size:11px;color:var(--amber);padding:4px 15px 6px;background:#fbbf2410;border-top:1px solid #fbbf2430;display:flex;align-items:center;gap:5px}
-.copy-toast{position:fixed;bottom:20px;right:20px;background:var(--bg2);border:1px solid var(--border);color:var(--green);padding:9px 14px;border-radius:var(--radius-sm);font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}
-.copy-toast.show{opacity:1}
-.placeholder-msg{color:var(--text3);font-size:14px;padding:40px 15px;text-align:center}
-.select-humanize-bar{display:none;align-items:center;gap:8px;padding:6px 15px;background:#6c63ff15;border-top:1px solid #6c63ff33;font-size:12px;color:var(--accent2)}
-.select-humanize-bar.show{display:flex}
-@media(max-width:768px){.grid{grid-template-columns:1fr}.controls-row{flex-direction:column}.score-row{flex-direction:column}.hist-panel{width:100vw}}
+.lang-option{padding:8px 14px;font-size:13px;color:var(--text2);cursor:pointer;transition:background .15s}
+.lang-option:hover,.lang-option.selected{background:linear-gradient(135deg,#7B61FF20,#4F8EF720);color:#a78bfa}
+.detected-badge{font-size:11px;color:var(--text3);background:var(--glass2);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
+
+/* HISTORY */
+.hist-overlay{position:fixed;inset:0;background:#00000080;z-index:200;display:none;align-items:flex-start;justify-content:flex-end;backdrop-filter:blur(4px)}
+.hist-overlay.open{display:flex}
+.hist-panel{background:#0d0f1a;border-left:1px solid var(--border);width:340px;height:100vh;overflow-y:auto}
+.hist-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#0d0f1a;z-index:1}
+.hist-head h2{font-size:15px;font-weight:700;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hist-empty{padding:40px 20px;text-align:center;color:var(--text3);font-size:13px}
+.hist-item{padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.hist-item:hover{background:var(--glass)}
+.hist-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hist-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 8px;border-radius:20px}
+.hist-tag.humanize{background:#7B61FF20;color:#a78bfa}
+.hist-tag.proofread{background:#38D9A920;color:#38D9A9}
+.hist-tag.detect{background:#ff6b8a20;color:#ff6b8a}
+.hist-tag.translate{background:#ffb86c20;color:#ffb86c}
+.hist-time{font-size:11px;color:var(--text3)}
+.hist-preview{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* SELECT BAR */
+.sel-bar{display:none;align-items:center;gap:8px;padding:8px 18px;background:linear-gradient(135deg,#7B61FF15,#4F8EF715);border-top:1px solid #7B61FF30;font-size:12px;color:#a78bfa}
+.sel-bar.show{display:flex}
+
+/* WARN */
+.warn-msg{font-size:11px;color:var(--amber);padding:5px 18px 7px;background:#ffb86c10;border-top:1px solid #ffb86c30;display:flex;align-items:center;gap:5px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--glass3);backdrop-filter:blur(20px);border:1px solid var(--border2);color:var(--green);padding:10px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;opacity:0;transition:all .3s;pointer-events:none;z-index:999;box-shadow:var(--shadow)}
+.toast.show{opacity:1;transform:translateY(-4px)}
+
+.placeholder-msg{color:var(--text3);font-size:14px;padding:50px 18px;text-align:center;line-height:1.8}
+.placeholder-msg .emoji{font-size:32px;display:block;margin-bottom:12px}
+
+/* DIFF */
+.diff-add{background:#38D9A920;color:#38D9A9;border-radius:3px;padding:1px 3px}
+.diff-del{background:#ff6b8a20;color:#ff6b8a;text-decoration:line-through;border-radius:3px;padding:1px 3px}
+
+@media(max-width:768px){
+  .sidebar{width:60px}
+  .logo-text,.logo-badge,.nav-label,.nav-badge{display:none}
+  .sidebar-logo{justify-content:center;padding:0 0 24px}
+  .nav-item{justify-content:center;padding:10px}
+  .editor-grid{grid-template-columns:1fr}
+  .score-row{flex-direction:column}
+  .signals-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
 
-<div class="header">
-  <div class="logo">✍️</div>
-  <h1>HumanizeAI <span>— Premium Suite</span></h1>
-  <div class="hdr-right">
-    <button class="hist-btn" onclick="toggleHistory()">📜 History <span id="hist-count" style="background:#6c63ff33;color:var(--accent2);padding:1px 6px;border-radius:10px;font-size:11px">0</span></button>
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
-    <div class="badge">Powered by Claude</div>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🐧</div>
+    <div>
+      <div class="logo-text">Pengu</div>
+      <div class="logo-badge">AI Writing Suite</div>
+    </div>
   </div>
-</div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="switchTab('humanize')"><span class="nav-icon">🔄</span><span class="nav-label">Humanize</span></div>
+    <div class="nav-item" onclick="switchTab('proofread')"><span class="nav-icon">✅</span><span class="nav-label">Proofread</span></div>
+    <div class="nav-item" onclick="switchTab('detect')"><span class="nav-icon">🔍</span><span class="nav-label">AI Detect</span></div>
+    <div class="nav-item" onclick="switchTab('translate')"><span class="nav-icon">🌍</span><span class="nav-label">Translate</span><span class="nav-badge">100+</span></div>
+    <div class="nav-item" onclick="toggleHistory()" style="margin-top:8px"><span class="nav-icon">📜</span><span class="nav-label">History</span><span class="nav-badge" id="hist-count">0</span></div>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()">🌙 <span>Dark mode</span></button>
+  </div>
+</aside>
 
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('humanize')">🔄 Humanize</div>
-  <div class="tab" onclick="switchTab('proofread')">✅ Proofread</div>
-  <div class="tab" onclick="switchTab('detect')">🔍 AI Detect</div>
-  <div class="tab" onclick="switchTab('translate')">🌍 Translate</div>
-</div>
-
+<!-- MAIN -->
 <div class="main">
 
-<!-- HUMANIZE -->
-<div class="panel active" id="panel-humanize">
-  <div class="controls">
-    <div class="controls-row">
-      <div class="ctrl-group">
-        <div class="ctrl-label">Tone</div>
-        <div class="chips" id="tone-chips">
-          <div class="chip active" data-val="casual">Casual</div>
-          <div class="chip" data-val="professional">Professional</div>
-          <div class="chip" data-val="friendly">Friendly & Warm</div>
-          <div class="chip" data-val="academic">Academic</div>
-          <div class="chip" data-val="witty">Witty & Creative</div>
-          <div class="chip" data-val="custom">✏️ Custom</div>
-        </div>
-        <div class="custom-tone-wrap" id="custom-tone-wrap" style="display:none">
-          <input class="custom-tone-input" id="custom-tone-input" placeholder='Describe your tone, e.g. "Write like a 28-year-old NYC tech blogger"'>
-        </div>
-      </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label">Style</div>
-        <div class="chips" id="style-chips">
-          <div class="chip active" data-val="concise">Concise</div>
-          <div class="chip" data-val="detailed">Detailed</div>
-          <div class="chip" data-val="storytelling">Storytelling</div>
-          <div class="chip" data-val="direct">Straight-to-the-point</div>
-        </div>
-      </div>
-      <div class="ctrl-group" style="max-width:180px">
-        <div class="ctrl-label">Strength</div>
-        <div class="slider-row">
-          <input type="range" min="1" max="3" value="2" step="1" id="strength-slider" oninput="document.getElementById('strength-val').textContent=['Light','Medium','Heavy'][this.value-1]">
-          <span class="slider-val" id="strength-val">Medium</span>
-        </div>
-        <div class="slider-labels"><span>Light</span><span>Heavy</span></div>
-      </div>
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="topbar-title" id="topbar-title">✨ Humanize Text</div>
+      <div class="topbar-sub" id="topbar-sub">Transform AI-generated text into authentic human writing</div>
+    </div>
+    <div class="topbar-right">
+      <div class="stat-pill" id="tb-in-stat">Input <span id="tb-in-wc">0</span> words</div>
+      <div class="stat-pill" id="tb-out-stat">Output <span id="tb-out-wc">0</span> words</div>
     </div>
   </div>
-  <div class="grid">
-    <div class="box">
-      <div class="box-header">
-        <div class="box-title"><div class="dot" style="background:var(--red)"></div>AI-Generated Text</div>
-        <button class="btn-sm" onclick="clearInput('h-input','h-in-count')">🗑 Clear</button>
-      </div>
-      <textarea id="h-input" placeholder="Paste your AI-generated text here...&#10;&#10;💡 Tip: Select any portion of text to humanize just that part."></textarea>
-      <div class="select-humanize-bar" id="sel-bar">
-        <span>✨ Selection detected</span>
-        <button class="btn-sm" style="background:#6c63ff33;border-color:#6c63ff55;color:var(--accent2)" onclick="humanizeSelection()">Humanize Selection</button>
-        <span id="sel-words" style="margin-left:auto;opacity:.7"></span>
-      </div>
-      <div class="action-bar">
-        <div class="word-count" id="h-in-count">0 words</div>
-        <div class="readability-bar" style="border:none;padding:0;gap:10px" id="h-in-stats"></div>
-      </div>
-    </div>
-    <div class="box">
-      <div class="box-header">
-        <div class="box-title"><div class="dot" style="background:var(--green)"></div>Humanized Output</div>
-        <div class="btn-group">
-          <button class="diff-toggle" id="diff-toggle" onclick="toggleDiff()" style="display:none">🔀 Diff</button>
-          <button class="btn-sm" onclick="copyText('h-output-text')">📋 Copy</button>
-          <button class="btn-export" onclick="exportDoc('h-output-text','humanized')">📄 Word</button>
-          <button class="btn-export" onclick="exportPDF('h-output-text','humanized')">🖨 PDF</button>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- HUMANIZE -->
+    <div class="panel active" id="panel-humanize">
+      <div class="controls-card">
+        <div class="controls-grid">
+          <div class="ctrl">
+            <div class="ctrl-label">🎨 Tone</div>
+            <div class="chips" id="tone-chips">
+              <div class="chip active" data-val="casual">Casual</div>
+              <div class="chip" data-val="professional">Professional</div>
+              <div class="chip" data-val="friendly">Friendly</div>
+              <div class="chip" data-val="academic">Academic</div>
+              <div class="chip" data-val="witty">Witty</div>
+              <div class="chip" data-val="custom">✏️ Custom</div>
+            </div>
+            <div class="custom-tone" id="custom-tone-wrap" style="display:none">
+              <input id="custom-tone-input" placeholder='e.g. "Write like a 25-year-old tech blogger"'>
+            </div>
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-label">✍️ Style</div>
+            <div class="chips" id="style-chips">
+              <div class="chip active" data-val="concise">Concise</div>
+              <div class="chip" data-val="detailed">Detailed</div>
+              <div class="chip" data-val="storytelling">Storytelling</div>
+              <div class="chip" data-val="direct">Direct</div>
+            </div>
+          </div>
+          <div class="strength-wrap">
+            <div class="ctrl-label">⚡ Strength</div>
+            <div class="strength-slider">
+              <input type="range" min="1" max="3" value="2" step="1" id="strength-slider" oninput="document.getElementById('strength-val').textContent=['Light','Medium','Heavy'][this.value-1]">
+              <span class="strength-val" id="strength-val">Medium</span>
+            </div>
+            <div class="strength-labels"><span>Light</span><span>Heavy</span></div>
+          </div>
         </div>
       </div>
-      <div id="h-output-area"><div class="placeholder-msg">Your humanized text will appear here...</div></div>
-      <div class="action-bar">
-        <div class="word-count" id="h-out-count">0 words</div>
-        <div id="h-out-stats" style="display:flex;gap:10px"></div>
+
+      <div class="editor-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--red)"></div>AI-Generated Text</div>
+            <button class="btn btn-ghost" onclick="clearInput('h-input','h-in-count')">🗑 Clear</button>
+          </div>
+          <textarea id="h-input" placeholder="Paste your AI-generated text here...&#10;&#10;💡 Tip: Select any portion to humanize just that part."></textarea>
+          <div class="sel-bar" id="sel-bar">
+            <span>✨ Selection detected</span>
+            <button class="btn btn-ghost" style="background:#7B61FF30;border-color:#7B61FF50;color:#a78bfa" onclick="humanizeSelection()">Humanize Selection</button>
+            <span id="sel-words" style="margin-left:auto;opacity:.6"></span>
+          </div>
+          <div class="action-bar">
+            <div class="word-count">📝 <span id="h-in-count">0 words</span></div>
+            <div class="readability" id="h-in-stats"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--green)"></div>Humanized Output</div>
+            <div class="btn-group">
+              <button class="btn btn-diff" id="diff-toggle" onclick="toggleDiff()" style="display:none">🔀 Diff</button>
+              <button class="btn btn-ghost" onclick="copyText('h-output-text')">📋 Copy</button>
+              <button class="btn btn-export" onclick="exportDoc('h-output-text','humanized')">📄 Word</button>
+              <button class="btn btn-export" onclick="exportPDF('h-output-text','humanized')">🖨 PDF</button>
+            </div>
+          </div>
+          <div id="h-output-area"><div class="placeholder-msg"><span class="emoji">🐧</span>Your humanized text will appear here...</div></div>
+          <div class="action-bar">
+            <div class="word-count">📝 <span id="h-out-count">0 words</span></div>
+            <div class="readability" id="h-out-stats"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="run-bar">
+        <div class="undo-group">
+          <button class="btn btn-ghost" id="h-undo-btn" onclick="undoResult('h')" disabled>↩ Undo</button>
+          <button class="btn btn-ghost" id="h-redo-btn" onclick="redoResult('h')" disabled>↪ Redo</button>
+        </div>
+        <button class="btn-primary" id="h-btn" onclick="runHumanize()">🐧 Pengu It!</button>
       </div>
     </div>
-  </div>
-  <div class="run-bar">
-    <div class="undo-group">
-      <button class="btn-sm" id="h-undo-btn" onclick="undoResult('h')" disabled>↩ Undo</button>
-      <button class="btn-sm" id="h-redo-btn" onclick="redoResult('h')" disabled>↪ Redo</button>
+
+    <!-- PROOFREAD -->
+    <div class="panel" id="panel-proofread">
+      <div class="editor-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--amber)"></div>Original Text</div>
+            <button class="btn btn-ghost" onclick="clearInput('p-input','p-in-count')">🗑 Clear</button>
+          </div>
+          <textarea id="p-input" placeholder="Paste your text to proofread..."></textarea>
+          <div class="action-bar"><div class="word-count">📝 <span id="p-in-count">0 words</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--green)"></div>Corrected Output</div>
+            <div class="btn-group">
+              <button class="btn btn-ghost" onclick="copyText('p-output-plain')">📋 Copy</button>
+              <button class="btn btn-export" onclick="exportDoc('p-output-plain','proofread')">📄 Word</button>
+              <button class="btn btn-export" onclick="exportPDF('p-output-plain','proofread')">🖨 PDF</button>
+            </div>
+          </div>
+          <div id="p-output-area"><div class="placeholder-msg"><span class="emoji">✅</span>Corrections will appear here...</div></div>
+          <div class="proof-stats" id="p-stats" style="display:none">
+            <div class="proof-stat">Errors<span id="s-errors">0</span></div>
+            <div class="proof-stat">Suggestions<span id="s-sugg">0</span></div>
+            <div class="proof-stat">Score<span id="s-score">—</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="run-bar">
+        <div class="undo-group">
+          <button class="btn btn-ghost" id="p-undo-btn" onclick="undoResult('p')" disabled>↩ Undo</button>
+          <button class="btn btn-ghost" id="p-redo-btn" onclick="redoResult('p')" disabled>↪ Redo</button>
+        </div>
+        <button class="btn-primary" id="p-btn" onclick="runProofread()">✅ Proofread Text</button>
+      </div>
     </div>
-    <button class="btn btn-primary" id="h-btn" onclick="runHumanize()">✨ Humanize Text</button>
+
+    <!-- DETECT -->
+    <div class="panel" id="panel-detect">
+      <div class="editor-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:#a78bfa"></div>Text to Analyze</div>
+            <button class="btn btn-ghost" onclick="clearInput('d-input','d-in-count')">🗑 Clear</button>
+          </div>
+          <textarea id="d-input" placeholder="Paste text to check if it's AI or human written...&#10;&#10;💡 Best results with 100+ words."></textarea>
+          <div class="action-bar"><div class="word-count">📝 <span id="d-in-count">0 words</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--red)"></div>Detection Results</div></div>
+          <div id="d-output-area"><div class="placeholder-msg"><span class="emoji">🔍</span>AI vs Human analysis will appear here...</div></div>
+        </div>
+      </div>
+      <div class="run-bar">
+        <div class="undo-group">
+          <button class="btn btn-ghost" id="d-undo-btn" onclick="undoResult('d')" disabled>↩ Undo</button>
+          <button class="btn btn-ghost" id="d-redo-btn" onclick="redoResult('d')" disabled>↪ Redo</button>
+        </div>
+        <button class="btn-primary" id="d-btn" onclick="runDetect()">🔍 Analyze Text</button>
+      </div>
+    </div>
+
+    <!-- TRANSLATE -->
+    <div class="panel" id="panel-translate">
+      <div class="controls-card">
+        <div class="controls-grid">
+          <div class="ctrl">
+            <div class="ctrl-label">🌍 Target Language</div>
+            <div class="lang-wrap">
+              <input class="lang-input" id="lang-search" placeholder="Search language..." autocomplete="off" oninput="filterLangs()" onfocus="openLangDrop()" onblur="setTimeout(closeLangDrop,200)">
+              <div class="lang-dropdown" id="lang-dropdown"></div>
+            </div>
+          </div>
+          <div class="ctrl">
+            <div class="ctrl-label">🎨 Tone</div>
+            <div class="chips" id="trans-tone-chips">
+              <div class="chip active" data-val="neutral">Neutral</div>
+              <div class="chip" data-val="formal">Formal</div>
+              <div class="chip" data-val="informal">Informal</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="editor-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--amber)"></div>Source Text</div>
+            <span class="detected-badge" id="detected-lang">Auto-detect</span>
+          </div>
+          <textarea id="t-input" placeholder="Paste text to translate..."></textarea>
+          <div class="action-bar"><div class="word-count">📝 <span id="t-in-count">0 words</span></div><button class="btn btn-ghost" onclick="clearInput('t-input','t-in-count')">🗑 Clear</button></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><div class="card-dot" style="background:var(--green)"></div>Translated Output</div>
+            <div class="btn-group">
+              <button class="btn btn-ghost" onclick="copyText('t-output-text')">📋 Copy</button>
+              <button class="btn btn-export" onclick="exportDoc('t-output-text','translation')">📄 Word</button>
+              <button class="btn btn-export" onclick="exportPDF('t-output-text','translation')">🖨 PDF</button>
+            </div>
+          </div>
+          <div id="t-output-area"><div class="placeholder-msg"><span class="emoji">🌍</span>Translation will appear here...</div></div>
+          <div class="action-bar"><div class="word-count">📝 <span id="t-out-count">0 words</span></div></div>
+        </div>
+      </div>
+      <div class="run-bar">
+        <div class="undo-group">
+          <button class="btn btn-ghost" id="t-undo-btn" onclick="undoResult('t')" disabled>↩ Undo</button>
+          <button class="btn btn-ghost" id="t-redo-btn" onclick="redoResult('t')" disabled>↪ Redo</button>
+        </div>
+        <button class="btn-primary" id="t-btn" onclick="runTranslate()">🌍 Translate</button>
+      </div>
+    </div>
+
   </div>
 </div>
-
-<!-- PROOFREAD -->
-<div class="panel" id="panel-proofread">
-  <div class="grid">
-    <div class="box">
-      <div class="box-header"><div class="box-title"><div class="dot" style="background:var(--amber)"></div>Original Text</div><button class="btn-sm" onclick="clearInput('p-input','p-in-count')">🗑 Clear</button></div>
-      <textarea id="p-input" placeholder="Paste your text to proofread..."></textarea>
-      <div class="action-bar"><div class="word-count" id="p-in-count">0 words</div></div>
-    </div>
-    <div class="box">
-      <div class="box-header">
-        <div class="box-title"><div class="dot" style="background:var(--green)"></div>Corrected & Annotated</div>
-        <div class="btn-group">
-          <button class="btn-sm" onclick="copyText('p-output-plain')">📋 Copy</button>
-          <button class="btn-export" onclick="exportDoc('p-output-plain','proofread')">📄 Word</button>
-          <button class="btn-export" onclick="exportPDF('p-output-plain','proofread')">🖨 PDF</button>
-        </div>
-      </div>
-      <div id="p-output-area"><div class="placeholder-msg">Corrections and suggestions will appear here...</div></div>
-      <div class="stats-row" id="p-stats" style="display:none">
-        <div class="stat">Errors<span id="s-errors">0</span></div>
-        <div class="stat">Suggestions<span id="s-sugg">0</span></div>
-        <div class="stat">Score<span id="s-score">—</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="run-bar">
-    <div class="undo-group">
-      <button class="btn-sm" id="p-undo-btn" onclick="undoResult('p')" disabled>↩ Undo</button>
-      <button class="btn-sm" id="p-redo-btn" onclick="redoResult('p')" disabled>↪ Redo</button>
-    </div>
-    <button class="btn btn-primary" id="p-btn" onclick="runProofread()">✅ Proofread Text</button>
-  </div>
 </div>
 
-<!-- DETECT -->
-<div class="panel" id="panel-detect">
-  <div class="grid">
-    <div class="box">
-      <div class="box-header"><div class="box-title"><div class="dot" style="background:var(--accent2)"></div>Text to Analyze</div><button class="btn-sm" onclick="clearInput('d-input','d-in-count')">🗑 Clear</button></div>
-      <textarea id="d-input" placeholder="Paste text to check if it's AI or human written...&#10;&#10;💡 Best results with 100+ words."></textarea>
-      <div class="action-bar"><div class="word-count" id="d-in-count">0 words</div></div>
-    </div>
-    <div class="box">
-      <div class="box-header"><div class="box-title"><div class="dot" style="background:var(--red)"></div>Detection Results</div></div>
-      <div id="d-output-area"><div class="placeholder-msg">AI vs Human analysis will appear here...</div></div>
-    </div>
-  </div>
-  <div class="run-bar">
-    <div class="undo-group">
-      <button class="btn-sm" id="d-undo-btn" onclick="undoResult('d')" disabled>↩ Undo</button>
-      <button class="btn-sm" id="d-redo-btn" onclick="redoResult('d')" disabled>↪ Redo</button>
-    </div>
-    <button class="btn btn-primary" id="d-btn" onclick="runDetect()">🔍 Analyze Text</button>
-  </div>
-</div>
-
-<!-- TRANSLATE -->
-<div class="panel" id="panel-translate">
-  <div class="controls">
-    <div class="controls-row">
-      <div class="ctrl-group">
-        <div class="ctrl-label">Target Language</div>
-        <div class="lang-select-wrap">
-          <input class="lang-search" id="lang-search" placeholder="Search language..." autocomplete="off" oninput="filterLangs()" onfocus="openLangDrop()" onblur="setTimeout(closeLangDrop,200)">
-          <div class="lang-dropdown" id="lang-dropdown"></div>
-        </div>
-      </div>
-      <div class="ctrl-group">
-        <div class="ctrl-label">Translation Tone</div>
-        <div class="chips" id="trans-tone-chips">
-          <div class="chip active" data-val="neutral">Neutral</div>
-          <div class="chip" data-val="formal">Formal</div>
-          <div class="chip" data-val="informal">Informal</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="grid">
-    <div class="box">
-      <div class="box-header">
-        <div class="box-title"><div class="dot" style="background:var(--amber)"></div>Source Text</div>
-        <span class="detected-badge" id="detected-lang">Auto-detect language</span>
-      </div>
-      <textarea id="t-input" placeholder="Paste text to translate..."></textarea>
-      <div class="action-bar"><div class="word-count" id="t-in-count">0 words</div><button class="btn-sm" onclick="clearInput('t-input','t-in-count')">🗑 Clear</button></div>
-    </div>
-    <div class="box">
-      <div class="box-header">
-        <div class="box-title"><div class="dot" style="background:var(--green)"></div>Translated Output</div>
-        <div class="btn-group">
-          <button class="btn-sm" onclick="copyText('t-output-text')">📋 Copy</button>
-          <button class="btn-export" onclick="exportDoc('t-output-text','translation')">📄 Word</button>
-          <button class="btn-export" onclick="exportPDF('t-output-text','translation')">🖨 PDF</button>
-        </div>
-      </div>
-      <div id="t-output-area"><div class="placeholder-msg">Your translated text will appear here...</div></div>
-      <div class="action-bar"><div class="word-count" id="t-out-count">0 words</div></div>
-    </div>
-  </div>
-  <div class="run-bar">
-    <div class="undo-group">
-      <button class="btn-sm" id="t-undo-btn" onclick="undoResult('t')" disabled>↩ Undo</button>
-      <button class="btn-sm" id="t-redo-btn" onclick="redoResult('t')" disabled>↪ Redo</button>
-    </div>
-    <button class="btn btn-primary" id="t-btn" onclick="runTranslate()">🌍 Translate Text</button>
-  </div>
-</div>
-
-</div>
-
-<!-- HISTORY PANEL -->
+<!-- HISTORY -->
 <div class="hist-overlay" id="hist-overlay" onclick="if(event.target===this)toggleHistory()">
   <div class="hist-panel">
     <div class="hist-head">
-      <h2>📜 Session History</h2>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn-sm" onclick="clearHistory()">🗑 Clear All</button>
-        <button class="btn-sm" onclick="toggleHistory()">✕ Close</button>
+      <h2>📜 History</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="clearHistory()">🗑 Clear</button>
+        <button class="btn btn-ghost" onclick="toggleHistory()">✕</button>
       </div>
     </div>
     <div id="hist-list"></div>
   </div>
 </div>
 
-<div class="copy-toast" id="copy-toast">✅ Copied to clipboard!</div>
+<div class="toast" id="toast">✅ Copied!</div>
 
 <script>
-const API_URL="/api/chat",MODEL="claude-sonnet-4-20250514",MAX_TOKENS=4000,WARN_WORDS=800;
+const API_URL="/api/chat",MAX_TOKENS=4000,WARN_WORDS=800;
 const LANGS=["Afrikaans","Albanian","Amharic","Arabic","Armenian","Azerbaijani","Basque","Bengali","Bosnian","Bulgarian","Catalan","Chinese (Simplified)","Chinese (Traditional)","Croatian","Czech","Danish","Dutch","Esperanto","Estonian","Finnish","French","Galician","Georgian","German","Greek","Gujarati","Haitian Creole","Hausa","Hebrew","Hindi","Hungarian","Icelandic","Indonesian","Irish","Italian","Japanese","Javanese","Kannada","Kazakh","Khmer","Korean","Kurdish","Latin","Latvian","Lithuanian","Macedonian","Malay","Malayalam","Maltese","Maori","Marathi","Mongolian","Nepali","Norwegian","Pashto","Persian","Polish","Portuguese","Punjabi","Romanian","Russian","Samoan","Serbian","Sindhi","Sinhala","Slovak","Slovenian","Somali","Spanish","Swahili","Swedish","Tagalog","Tajik","Tamil","Telugu","Thai","Turkish","Ukrainian","Urdu","Uzbek","Vietnamese","Welsh","Xhosa","Yoruba","Zulu"];
+const TABS={humanize:{title:"🐧 Pengu",sub:"Transform AI-generated text into authentic human writing"},proofread:{title:"✅ Proofread Text",sub:"Fix grammar, spelling and clarity issues instantly"},detect:{title:"🔍 AI Detector",sub:"Find out exactly how human your text sounds"},translate:{title:"🌍 Translate Text",sub:"Translate into 100+ languages with tone control"}};
 
-// State
-let selLang="Spanish",isDark=true;
+let selLang="Spanish",isDark=true,origText="",humanizedText="",diffOn=false;
 const undoStacks={h:[],p:[],d:[],t:[]},redoStacks={h:[],p:[],d:[],t:[]};
-let origText="",humanizedText="",diffOn=false;
-let history=JSON.parse(localStorage.getItem('hai_history')||'[]');
+let history=[];
+try{history=JSON.parse(localStorage.getItem('pengu_history')||'[]')}catch(e){}
 
-// Theme
-function toggleTheme(){
-  isDark=!isDark;
-  document.body.classList.toggle('light',!isDark);
-  document.getElementById('theme-btn').textContent=isDark?'🌙 Dark':'☀️ Light';
-  localStorage.setItem('hai_theme',isDark?'dark':'light');
-}
-(function(){const t=localStorage.getItem('hai_theme');if(t==='light'){isDark=false;document.body.classList.add('light');document.getElementById('theme-btn').textContent='☀️ Light'}})();
-
-// Tabs
 function switchTab(t){
-  const tabs=['humanize','proofread','detect','translate'];
-  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===t));
+  document.querySelectorAll('.nav-item').forEach((el,i)=>el.classList.toggle('active',['humanize','proofread','detect','translate','history'][i]===t));
   document.querySelectorAll('.panel').forEach(el=>el.classList.remove('active'));
   document.getElementById('panel-'+t).classList.add('active');
+  document.getElementById('topbar-title').textContent=TABS[t].title;
+  document.getElementById('topbar-sub').textContent=TABS[t].sub;
 }
 
-// Word count & readability
+function toggleTheme(){
+  isDark=!isDark;
+  const btn=document.getElementById('theme-btn');
+  btn.innerHTML=isDark?'🌙 <span>Dark mode</span>':'☀️ <span>Light mode</span>';
+  document.body.style.background=isDark?'':'#f0f2ff';
+}
+
 function wordCount(txt){return txt.trim()?txt.trim().split(/\s+/).length:0}
 function fleschKincaid(txt){
   if(!txt.trim())return null;
   const sentences=txt.split(/[.!?]+/).filter(s=>s.trim().length>2).length||1;
   const words=txt.trim().split(/\s+/).length;
-  const syllables=txt.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).reduce((acc,w)=>{
-    return acc+Math.max(1,(w.match(/[aeiou]{1,2}/g)||[]).length);
-  },0);
+  const syllables=txt.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).reduce((a,w)=>a+Math.max(1,(w.match(/[aeiou]{1,2}/g)||[]).length),0);
   const score=206.835-1.015*(words/sentences)-84.6*(syllables/words);
   if(score>=90)return{grade:'Very Easy',color:'var(--green)'};
   if(score>=70)return{grade:'Easy',color:'var(--green)'};
-  if(score>=60)return{grade:'Medium',color:'var(--amber)'};
+  if(score>=60)return{grade:'Standard',color:'var(--amber)'};
   if(score>=50)return{grade:'Hard',color:'var(--amber)'};
   return{grade:'Very Hard',color:'var(--red)'};
 }
-function avgSentLen(txt){
-  const sentences=txt.split(/[.!?]+/).filter(s=>s.trim().length>2);
-  if(!sentences.length)return 0;
-  const total=sentences.reduce((a,s)=>a+s.trim().split(/\s+/).length,0);
-  return Math.round(total/sentences.length);
-}
-function renderStats(txt,containerId){
-  const el=document.getElementById(containerId);if(!el)return;
+function renderStats(txt,id){
+  const el=document.getElementById(id);if(!el)return;
   if(!txt.trim()){el.innerHTML='';return}
-  const fk=fleschKincaid(txt),asl=avgSentLen(txt);
-  el.innerHTML=fk?`<span style="font-size:11px;color:var(--text3)">Reading level: <span style="color:${fk.color};font-weight:600">${fk.grade}</span></span><span style="font-size:11px;color:var(--text3)">Avg sentence: <span style="color:var(--accent2);font-weight:600">${asl} words</span></span>`:'';
+  const fk=fleschKincaid(txt),asl=Math.round(txt.split(/[.!?]+/).filter(s=>s.trim().length>2).reduce((a,s,_,arr)=>a+s.trim().split(/\s+/).length/arr.length,0));
+  el.innerHTML=fk?`<div class="rb-stat">Level: <span style="color:${fk.color}">${fk.grade}</span></div><div class="rb-stat">Avg sentence: <span style="color:#a78bfa">${asl}w</span></div>`:'';
 }
 
-function setupWC(inputId,countId,statsId){
+function setupWC(inputId,countId,statsId,tbId){
   const el=document.getElementById(inputId),c=document.getElementById(countId);
   el.addEventListener('input',()=>{
-    const wds=wordCount(el.value);
-    c.textContent=wds+' words';
-    c.style.color=wds>WARN_WORDS?'var(--amber)':'';
-    let warn=el.parentElement.querySelector('.warn-msg');
-    if(wds>WARN_WORDS){if(!warn){warn=document.createElement('div');warn.className='warn-msg';warn.innerHTML='⚠️ Long text — processing may take a moment';el.parentElement.appendChild(warn)}}
+    const w=wordCount(el.value);
+    c.textContent=w+' words';
+    c.style.color=w>WARN_WORDS?'var(--amber)':'';
+    if(tbId)document.getElementById(tbId).textContent=w;
+    let warn=el.closest('.card').querySelector('.warn-msg');
+    if(w>WARN_WORDS){if(!warn){warn=document.createElement('div');warn.className='warn-msg';warn.innerHTML='⚠️ Long text — processing may take longer';el.closest('.card').querySelector('.action-bar').before(warn)}}
     else{if(warn)warn.remove()}
     if(statsId)renderStats(el.value,statsId);
   });
 }
-setupWC('h-input','h-in-count','h-in-stats');
-setupWC('p-input','p-in-count',null);
-setupWC('d-input','d-in-count',null);
-setupWC('t-input','t-in-count',null);
+setupWC('h-input','h-in-count','h-in-stats','tb-in-wc');
+setupWC('p-input','p-in-count',null,null);
+setupWC('d-input','d-in-count',null,null);
+setupWC('t-input','t-in-count',null,null);
 
-// Select to humanize
-document.getElementById('h-input').addEventListener('mouseup',checkSelection);
-document.getElementById('h-input').addEventListener('keyup',checkSelection);
-function checkSelection(){
-  const ta=document.getElementById('h-input');
-  const sel=ta.value.substring(ta.selectionStart,ta.selectionEnd).trim();
+document.getElementById('h-input').addEventListener('mouseup',checkSel);
+document.getElementById('h-input').addEventListener('keyup',checkSel);
+function checkSel(){
+  const ta=document.getElementById('h-input'),sel=ta.value.substring(ta.selectionStart,ta.selectionEnd).trim();
   const bar=document.getElementById('sel-bar');
-  if(sel.length>20){
-    bar.classList.add('show');
-    document.getElementById('sel-words').textContent=wordCount(sel)+' words selected';
-  }else{bar.classList.remove('show')}
-}
-async function humanizeSelection(){
-  const ta=document.getElementById('h-input');
-  const start=ta.selectionStart,end=ta.selectionEnd;
-  const sel=ta.value.substring(start,end).trim();
-  if(!sel)return;
-  const tone=getSelected('tone-chips'),style=getSelected('style-chips');
-  const strength=['light','moderate','heavy'][document.getElementById('strength-slider').value-1];
-  const customTone=tone==='custom'?document.getElementById('custom-tone-input').value:'';
-  const toneDesc=tone==='custom'&&customTone?customTone:tone;
-  document.getElementById('sel-bar').innerHTML='<span>⏳ Humanizing selection...</span>';
-  try{
-    const result=await callClaude(`Rewrite ONLY this text selection to sound human. Tone: ${toneDesc}. Style: ${style}. Strength: ${strength}. Return ONLY the rewritten text:\n\n${sel}`);
-    const newVal=ta.value.substring(0,start)+result+ta.value.substring(end);
-    ta.value=newVal;
-    document.getElementById('h-in-count').textContent=wordCount(newVal)+' words';
-  }catch(e){alert('Error: '+e.message)}
-  document.getElementById('sel-bar').classList.remove('show');
+  if(sel.length>20){bar.classList.add('show');document.getElementById('sel-words').textContent=wordCount(sel)+' words selected'}
+  else bar.classList.remove('show');
 }
 
-// Custom tone
 document.querySelectorAll('#tone-chips .chip').forEach(c=>{
   c.addEventListener('click',()=>{
     document.querySelectorAll('#tone-chips .chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');
     document.getElementById('custom-tone-wrap').style.display=c.dataset.val==='custom'?'block':'none';
   });
 });
-['style-chips','trans-tone-chips'].forEach(gid=>{
-  document.querySelectorAll('#'+gid+' .chip').forEach(c=>{
-    c.addEventListener('click',()=>{document.querySelectorAll('#'+gid+' .chip').forEach(x=>x.classList.remove('active'));c.classList.add('active')});
-  });
+['style-chips','trans-tone-chips'].forEach(g=>{
+  document.querySelectorAll('#'+g+' .chip').forEach(c=>c.addEventListener('click',()=>{document.querySelectorAll('#'+g+' .chip').forEach(x=>x.classList.remove('active'));c.classList.add('active')}));
 });
 
-function getSelected(gid){return document.querySelector('#'+gid+' .chip.active')?.dataset.val||''}
+function getSelected(g){return document.querySelector('#'+g+' .chip.active')?.dataset.val||''}
 function clearInput(a,b){document.getElementById(a).value='';document.getElementById(b).textContent='0 words'}
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function wordCount2(s){return s.trim()?s.trim().split(/\s+/).length:0}
 
-// Undo/Redo
-function pushUndo(tab,html){
-  undoStacks[tab].push(html);if(undoStacks[tab].length>20)undoStacks[tab].shift();
-  redoStacks[tab]=[];updateUndoUI(tab);
-}
-function undoResult(tab){
-  const area=document.getElementById(tab+'-output-area');
-  if(!undoStacks[tab].length)return;
-  redoStacks[tab].push(area.innerHTML);
-  area.innerHTML=undoStacks[tab].pop();updateUndoUI(tab);
-}
-function redoResult(tab){
-  const area=document.getElementById(tab+'-output-area');
-  if(!redoStacks[tab].length)return;
-  undoStacks[tab].push(area.innerHTML);
-  area.innerHTML=redoStacks[tab].pop();updateUndoUI(tab);
-}
-function updateUndoUI(tab){
-  document.getElementById(tab+'-undo-btn').disabled=!undoStacks[tab].length;
-  document.getElementById(tab+'-redo-btn').disabled=!redoStacks[tab].length;
+function showLoader(id,msg){
+  const msgs=['🐧 '+msg,'✨ Working on it...','💫 Almost there...'];
+  let i=0;
+  document.getElementById(id).innerHTML=`<div class="loader show"><div class="loader-penguin">🐧</div><div style="font-size:13px;color:var(--text2)" id="loader-msg">${msgs[0]}</div><div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div></div>`;
+  const iv=setInterval(()=>{i=(i+1)%msgs.length;const m=document.getElementById('loader-msg');if(m)m.textContent=msgs[i];else clearInterval(iv)},1800);
 }
 
-// Diff view
+async function callClaude(prompt){
+  const safe=prompt.replace(/[\u0000-\u001F\u007F]/g,' ');
+  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:safe,max_tokens:MAX_TOKENS})});
+  const data=await res.json();
+  if(data.error)throw new Error(data.error.message||data.error);
+  return data.content.map(b=>b.text||'').join('');
+}
+
+function pushUndo(tab,html){undoStacks[tab].push(html);if(undoStacks[tab].length>20)undoStacks[tab].shift();redoStacks[tab]=[];updateUndoUI(tab)}
+function undoResult(tab){const a=document.getElementById(tab+'-output-area');if(!undoStacks[tab].length)return;redoStacks[tab].push(a.innerHTML);a.innerHTML=undoStacks[tab].pop();updateUndoUI(tab)}
+function redoResult(tab){const a=document.getElementById(tab+'-output-area');if(!redoStacks[tab].length)return;undoStacks[tab].push(a.innerHTML);a.innerHTML=redoStacks[tab].pop();updateUndoUI(tab)}
+function updateUndoUI(tab){document.getElementById(tab+'-undo-btn').disabled=!undoStacks[tab].length;document.getElementById(tab+'-redo-btn').disabled=!redoStacks[tab].length}
+
 function toggleDiff(){
   diffOn=!diffOn;
   const btn=document.getElementById('diff-toggle');
@@ -525,68 +615,60 @@ function renderDiff(){
   if(!diffOn){area.innerHTML=`<div class="output-text" id="h-output-text">${escHtml(humanizedText)}</div>`;return}
   const ow=origText.split(/\s+/),nw=humanizedText.split(/\s+/);
   let html='<div class="output-text" id="h-output-text" style="white-space:pre-wrap">';
-  const maxLen=Math.max(ow.length,nw.length);
   for(let i=0;i<nw.length;i++){
-    if(i>=ow.length){html+=`<span class="diff-add">${escHtml(nw[i])}</span> `}
-    else if(nw[i]!==ow[i]){html+=`<span class="diff-del">${escHtml(ow[i])}</span> <span class="diff-add">${escHtml(nw[i])}</span> `}
-    else{html+=escHtml(nw[i])+' '}
+    if(i>=ow.length)html+=`<span class="diff-add">${escHtml(nw[i])}</span> `;
+    else if(nw[i]!==ow[i])html+=`<span class="diff-del">${escHtml(ow[i])}</span> <span class="diff-add">${escHtml(nw[i])}</span> `;
+    else html+=escHtml(nw[i])+' ';
   }
-  html+='</div>';
-  area.innerHTML=html;
+  area.innerHTML=html+'</div>';
 }
 
-// History
 function addHistory(type,inputText,outputText){
-  const item={type,inputText,outputText,time:Date.now()};
-  history.unshift(item);if(history.length>20)history=history.slice(0,20);
-  localStorage.setItem('hai_history',JSON.stringify(history));
+  history.unshift({type,inputText,outputText,time:Date.now()});
+  if(history.length>20)history=history.slice(0,20);
+  try{localStorage.setItem('pengu_history',JSON.stringify(history))}catch(e){}
   renderHistory();
 }
 function renderHistory(){
   document.getElementById('hist-count').textContent=history.length;
   const list=document.getElementById('hist-list');
-  if(!history.length){list.innerHTML='<div class="hist-empty">No history yet.<br>Run any tool to start saving sessions.</div>';return}
-  list.innerHTML=history.map((item,i)=>`
-    <div class="hist-item" onclick="loadHistory(${i})">
-      <div class="hist-item-top">
-        <span class="hist-tag ${item.type}">${item.type}</span>
-        <span class="hist-time">${timeAgo(item.time)}</span>
-      </div>
-      <div class="hist-preview">${escHtml((item.outputText||'').substring(0,90))}...</div>
-    </div>`).join('');
+  if(!history.length){list.innerHTML='<div class="hist-empty">🐧 No history yet.<br>Run any tool to start saving.</div>';return}
+  list.innerHTML=history.map((item,i)=>`<div class="hist-item" onclick="loadHistory(${i})"><div class="hist-top"><span class="hist-tag ${item.type}">${item.type}</span><span class="hist-time">${timeAgo(item.time)}</span></div><div class="hist-preview">${escHtml((item.outputText||'').substring(0,80))}...</div></div>`).join('');
 }
 function loadHistory(i){
   const item=history[i];
   switchTab(item.type);toggleHistory();
   setTimeout(()=>{
-    const map={humanize:{input:'h-input',output:'h-output-area',count:'h-in-count'},proofread:{input:'p-input',output:'p-output-area',count:'p-in-count'},detect:{input:'d-input',output:'d-output-area',count:'d-in-count'},translate:{input:'t-input',output:'t-output-area',count:'t-in-count'}};
+    const map={humanize:{i:'h-input',o:'h-output-area',c:'h-in-count'},proofread:{i:'p-input',o:'p-output-area',c:'p-in-count'},detect:{i:'d-input',o:'d-output-area',c:'d-in-count'},translate:{i:'t-input',o:'t-output-area',c:'t-in-count'}};
     const m=map[item.type];if(!m)return;
-    document.getElementById(m.input).value=item.inputText;
-    document.getElementById(m.count).textContent=wordCount(item.inputText)+' words';
-    document.getElementById(m.output).innerHTML=`<div class="output-text" id="${m.input.split('-')[0]}-output-text">${escHtml(item.outputText)}</div>`;
+    document.getElementById(m.i).value=item.inputText;
+    document.getElementById(m.c).textContent=wordCount(item.inputText)+' words';
+    document.getElementById(m.o).innerHTML=`<div class="output-text" id="${m.i.split('-')[0]}-output-text">${escHtml(item.outputText)}</div>`;
   },100);
 }
-function clearHistory(){if(confirm('Clear all history?')){history=[];localStorage.removeItem('hai_history');renderHistory()}}
+function clearHistory(){if(confirm('Clear all history?')){history=[];try{localStorage.removeItem('pengu_history')}catch(e){}renderHistory()}}
 function toggleHistory(){document.getElementById('hist-overlay').classList.toggle('open')}
-function timeAgo(ts){
-  const d=Date.now()-ts,m=Math.floor(d/60000);
-  if(m<1)return'Just now';if(m<60)return m+'m ago';
-  const h=Math.floor(m/60);if(h<24)return h+'h ago';
-  return Math.floor(h/24)+'d ago';
-}
+function timeAgo(ts){const d=Date.now()-ts,m=Math.floor(d/60000);if(m<1)return'Just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago'}
 renderHistory();
 
-// API
-function showLoader(id,msg){document.getElementById(id).innerHTML=`<div class="loader show"><div class="spinner"></div><span>${msg}</span></div>`}
-async function callClaude(prompt){
-  const safe=prompt.replace(/[\u0000-\u001F\u007F]/g,' ');
-  const res=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:safe,max_tokens:MAX_TOKENS})});
-  const data=await res.json();
-  if(data.error)throw new Error(data.error.message||data.error);
-  return data.content.map(b=>b.text||'').join('');
+async function humanizeSelection(){
+  const ta=document.getElementById('h-input');
+  const start=ta.selectionStart,end=ta.selectionEnd;
+  const sel=ta.value.substring(start,end).trim();
+  if(!sel)return;
+  const tone=getSelected('tone-chips'),style=getSelected('style-chips');
+  const strength=['light','moderate','heavy'][document.getElementById('strength-slider').value-1];
+  const customTone=tone==='custom'?document.getElementById('custom-tone-input').value:'';
+  const toneDesc=tone==='custom'&&customTone?customTone:tone;
+  document.getElementById('sel-bar').innerHTML='<span>⏳ Humanizing selection...</span>';
+  try{
+    const result=await callClaude(`Rewrite ONLY this selection to sound 100% human. Tone: ${toneDesc}. Style: ${style}. Strength: ${strength}. Remove all AI patterns. Return ONLY rewritten text:\n\n${sel}`);
+    ta.value=ta.value.substring(0,start)+result+ta.value.substring(end);
+    document.getElementById('h-in-count').textContent=wordCount(ta.value)+' words';
+  }catch(e){alert('Error: '+e.message)}
+  document.getElementById('sel-bar').classList.remove('show');
 }
 
-// Humanize
 async function runHumanize(){
   const txt=document.getElementById('h-input').value.trim();
   if(!txt)return alert('Please paste some text first.');
@@ -594,13 +676,11 @@ async function runHumanize(){
   const strength=['light','moderate','heavy'][document.getElementById('strength-slider').value-1];
   const customTone=tone==='custom'?document.getElementById('custom-tone-input').value:'';
   const toneDesc=tone==='custom'&&customTone?customTone:tone;
-  const btn=document.getElementById('h-btn');
-  const area=document.getElementById('h-output-area');
-  pushUndo('h',area.innerHTML);
-  btn.disabled=true;diffOn=false;
+  const btn=document.getElementById('h-btn'),area=document.getElementById('h-output-area');
+  pushUndo('h',area.innerHTML);btn.disabled=true;diffOn=false;
   document.getElementById('diff-toggle').style.display='none';
   document.getElementById('diff-toggle').classList.remove('on');
-  showLoader('h-output-area','Humanizing your text...');
+  showLoader('h-output-area','Humanizing your text');
   try{
     const result=await callClaude(`You are an expert at rewriting AI-generated text to sound 100% authentically human. Your goal is to make the text completely undetectable as AI-written.
 
@@ -609,153 +689,144 @@ Style: ${style}
 Strength: ${strength}
 
 Apply ALL of these humanization techniques aggressively:
-1. VARY sentence length dramatically — mix very short punchy sentences with longer flowing ones
-2. ADD natural imperfections — occasional informal phrasing, contractions (don't, can't, it's, you'll)
-3. REMOVE all AI patterns — no "Furthermore", "Moreover", "In conclusion", "It is worth noting", "Delve", "Crucial", "Straightforward"
-4. ADD personal voice — opinions, mild emphasis, natural asides
-5. USE conversational transitions — "So", "But here's the thing", "And honestly", "Look," "The thing is"
-6. BREAK perfect grammar occasionally — start sentences with And or But, use dashes — like this
+1. VARY sentence length dramatically - mix very short punchy sentences with longer flowing ones
+2. ADD natural imperfections - occasional informal phrasing, contractions
+3. REMOVE all AI patterns - no Furthermore, Moreover, In conclusion, It is worth noting, Delve, Crucial, Straightforward
+4. ADD personal voice - opinions, mild emphasis, natural asides
+5. USE conversational transitions - So, But here is the thing, And honestly, Look, The thing is
+6. BREAK perfect grammar occasionally - start sentences with And or But, use dashes
 7. ADD specific concrete details instead of vague generalities
-8. VARY paragraph length — some one-liners, some longer
+8. VARY paragraph length - some one-liners, some longer
 9. REMOVE robotic repetition and overly balanced structure
 10. MAKE it sound like a real person wrote this in their natural voice
 
-The output must pass AI detection tools and score 85%+ human. Return ONLY the rewritten text, nothing else.\n\n${txt}`);
+The output must pass AI detection tools and score 85 percent or higher human. Return ONLY the rewritten text.\n\n${txt}`);
     origText=txt;humanizedText=result;
-    document.getElementById('h-output-area').innerHTML=`<div class="output-text" id="h-output-text">${escHtml(result)}</div>`;
+    area.innerHTML=`<div class="output-text" id="h-output-text">${escHtml(result)}</div>`;
     document.getElementById('h-out-count').textContent=wordCount(result)+' words';
+    document.getElementById('tb-out-wc').textContent=wordCount(result);
     renderStats(result,'h-out-stats');
     document.getElementById('diff-toggle').style.display='flex';
     document.getElementById('sel-bar').classList.remove('show');
     addHistory('humanize',txt,result);
-  }catch(e){document.getElementById('h-output-area').innerHTML=`<div class="placeholder-msg" style="color:var(--red)">Error: ${escHtml(e.message)}</div>`}
+  }catch(e){area.innerHTML=`<div class="placeholder-msg"><span class="emoji">❌</span>Error: ${escHtml(e.message)}</div>`}
   btn.disabled=false;
 }
 
-// Proofread
 async function runProofread(){
   const txt=document.getElementById('p-input').value.trim();
   if(!txt)return alert('Please paste some text first.');
-  const btn=document.getElementById('p-btn');
-  const area=document.getElementById('p-output-area');
-  pushUndo('p',area.innerHTML);
-  btn.disabled=true;showLoader('p-output-area','Proofreading your text...');
+  const btn=document.getElementById('p-btn'),area=document.getElementById('p-output-area');
+  pushUndo('p',area.innerHTML);btn.disabled=true;
+  showLoader('p-output-area','Proofreading your text');
   try{
-    const raw=await callClaude(`You are an expert proofreader. Analyze and return ONLY JSON (no markdown, no fences):\n{"corrected":"full corrected text","errors":[{"original":"...","correction":"...","type":"grammar|spelling|punctuation|clarity"}],"suggestions":["tip"],"score":85}\n\nText:\n${txt}`);
+    const raw=await callClaude(`You are an expert proofreader. Analyze and return ONLY JSON (no markdown, no fences): {"corrected":"full corrected text","errors":[{"original":"...","correction":"...","type":"grammar|spelling|punctuation|clarity"}],"suggestions":["tip"],"score":85}\n\nText:\n${txt}`);
     const data=JSON.parse(raw.replace(/```json|```/g,'').trim());
     const errCount=data.errors?.length||0,suggCount=data.suggestions?.length||0;
     let html=`<div class="proof-output" id="p-output-plain">${escHtml(data.corrected)}</div>`;
     if(errCount>0){
-      html+=`<div style="padding:10px 14px;border-top:1px solid var(--border);font-size:13px;color:var(--text2)"><strong style="color:var(--red)">🔴 Errors (${errCount})</strong>`;
-      data.errors.forEach(e=>{html+=`<div style="margin-top:7px;padding:7px 11px;background:var(--bg3);border-radius:var(--radius-xs);border-left:3px solid var(--red)"><span style="color:var(--red);text-decoration:line-through">${escHtml(e.original)}</span> → <span style="color:var(--green)">${escHtml(e.correction)}</span> <span style="color:var(--text3);font-size:11px">[${e.type}]</span></div>`});
+      html+=`<div style="padding:12px 18px;border-top:1px solid var(--border)"><strong style="color:var(--red);font-size:13px">🔴 Errors (${errCount})</strong>`;
+      data.errors.forEach(e=>{html+=`<div class="error-item"><span style="color:var(--red);text-decoration:line-through">${escHtml(e.original)}</span> → <span style="color:var(--green)">${escHtml(e.correction)}</span> <span style="color:var(--text3);font-size:11px">[${e.type}]</span></div>`});
       html+='</div>';
     }
     if(suggCount>0){
-      html+=`<div style="padding:10px 14px;border-top:1px solid var(--border);font-size:13px;color:var(--text2)"><strong style="color:var(--amber)">💡 Suggestions</strong>`;
-      data.suggestions.forEach(s=>{html+=`<div style="margin-top:5px;padding:7px 11px;background:var(--bg3);border-radius:var(--radius-xs);border-left:3px solid var(--amber);color:var(--text2)">${escHtml(s)}</div>`});
+      html+=`<div style="padding:12px 18px;border-top:1px solid var(--border)"><strong style="color:var(--amber);font-size:13px">💡 Suggestions</strong>`;
+      data.suggestions.forEach(s=>{html+=`<div class="sugg-item">${escHtml(s)}</div>`});
       html+='</div>';
     }
-    document.getElementById('p-output-area').innerHTML=html;
+    area.innerHTML=html;
     document.getElementById('p-stats').style.display='flex';
     document.getElementById('s-errors').textContent=errCount;
     document.getElementById('s-sugg').textContent=suggCount;
     document.getElementById('s-score').textContent=(data.score||'—')+(data.score?'/100':'');
     addHistory('proofread',txt,data.corrected);
-  }catch(e){document.getElementById('p-output-area').innerHTML=`<div class="placeholder-msg" style="color:var(--red)">Error: ${escHtml(e.message)}</div>`}
+  }catch(e){area.innerHTML=`<div class="placeholder-msg"><span class="emoji">❌</span>Error: ${escHtml(e.message)}</div>`}
   btn.disabled=false;
 }
 
-// Detect
 async function runDetect(){
   const txt=document.getElementById('d-input').value.trim();
   if(!txt)return alert('Please paste some text first.');
   if(wordCount(txt)<30)return alert('Please paste at least 30 words for accurate detection.');
-  const btn=document.getElementById('d-btn');
-  const area=document.getElementById('d-output-area');
-  pushUndo('d',area.innerHTML);
-  btn.disabled=true;showLoader('d-output-area','Analyzing text patterns...');
+  const btn=document.getElementById('d-btn'),area=document.getElementById('d-output-area');
+  pushUndo('d',area.innerHTML);btn.disabled=true;
+  showLoader('d-output-area','Analyzing text patterns');
   try{
-    const raw=await callClaude(`You are an AI detection expert. Analyze the text and return ONLY JSON (no markdown):\n{"human_pct":72,"ai_pct":28,"verdict":"Mostly Human","confidence":"High","signals":{"ai_signals":["s1","s2"],"human_signals":["s1","s2"]},"explanation":"2-3 sentence explanation"}\n\nText:\n${txt}`);
+    const raw=await callClaude(`You are an AI detection expert. Analyze the text and return ONLY JSON (no markdown): {"human_pct":72,"ai_pct":28,"verdict":"Mostly Human","confidence":"High","signals":{"ai_signals":["s1","s2"],"human_signals":["s1","s2"]},"explanation":"2-3 sentence explanation"}\n\nText:\n${txt}`);
     const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
     const hPct=Math.round(d.human_pct),aiPct=Math.round(d.ai_pct);
     const vc=hPct>=70?'var(--green)':hPct>=40?'var(--amber)':'var(--red)';
-    let html=`<div style="padding:16px">
+    let html=`<div style="padding:18px">
       <div class="score-row">
         <div class="score-card"><div class="score-num human">${hPct}%</div><div class="score-label">👤 Human Written</div></div>
         <div class="score-card"><div class="score-num ai">${aiPct}%</div><div class="score-label">🤖 AI Generated</div></div>
       </div>
-      <div class="bar-wrap">
-        <div class="bar-label-row"><span style="color:var(--green)">Human ${hPct}%</span><span style="color:var(--red)">AI ${aiPct}%</span></div>
-        <div class="progress-bar"><div class="progress-fill" style="width:${hPct}%"></div></div>
+      <div class="progress-wrap">
+        <div class="progress-labels"><span style="color:var(--green)">Human ${hPct}%</span><span style="color:var(--red)">AI ${aiPct}%</span></div>
+        <div class="progress-track"><div class="progress-fill" style="width:${hPct}%"></div></div>
       </div>
-      <div style="margin-bottom:12px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:19px;font-weight:800;color:${vc}">${escHtml(d.verdict)}</span>
-        <span style="font-size:12px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:20px;border:1px solid var(--border)">Confidence: ${escHtml(d.confidence)}</span>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span style="font-size:20px;font-weight:800;color:${vc}">${escHtml(d.verdict)}</span>
+        <span style="font-size:11px;color:var(--text3);background:var(--glass2);padding:3px 10px;border-radius:20px;border:1px solid var(--border)">Confidence: ${escHtml(d.confidence)}</span>
       </div>
-      <div class="verdict"><strong>Analysis:</strong> ${escHtml(d.explanation)}</div>`;
+      <div class="verdict-card"><strong>Analysis:</strong> ${escHtml(d.explanation)}</div>`;
     if(d.signals){
-      html+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px">`;
-      if(d.signals.ai_signals?.length){html+=`<div style="background:var(--bg3);border-radius:var(--radius-sm);padding:11px;border-left:3px solid var(--red)"><div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em">🤖 AI Signals</div>`;d.signals.ai_signals.forEach(s=>{html+=`<div style="font-size:12px;color:var(--text2);padding:3px 0;border-bottom:1px solid var(--border)">${escHtml(s)}</div>`});html+='</div>'}
-      if(d.signals.human_signals?.length){html+=`<div style="background:var(--bg3);border-radius:var(--radius-sm);padding:11px;border-left:3px solid var(--green)"><div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:7px;text-transform:uppercase;letter-spacing:.05em">👤 Human Signals</div>`;d.signals.human_signals.forEach(s=>{html+=`<div style="font-size:12px;color:var(--text2);padding:3px 0;border-bottom:1px solid var(--border)">${escHtml(s)}</div>`});html+='</div>'}
+      html+=`<div class="signals-grid">`;
+      if(d.signals.ai_signals?.length){html+=`<div class="signal-box" style="border-color:var(--red)"><div class="signal-title" style="color:var(--red)">🤖 AI Signals</div>`;d.signals.ai_signals.forEach(s=>{html+=`<div class="signal-item">${escHtml(s)}</div>`});html+='</div>'}
+      if(d.signals.human_signals?.length){html+=`<div class="signal-box" style="border-color:var(--green)"><div class="signal-title" style="color:var(--green)">👤 Human Signals</div>`;d.signals.human_signals.forEach(s=>{html+=`<div class="signal-item">${escHtml(s)}</div>`});html+='</div>'}
       html+='</div>';
     }
-    html+=`<div class="disclaimer">⚠️ AI detection is probabilistic and not 100% accurate. Results should be used as a guide, not a definitive judgment. Short texts (&lt;100 words) may produce less reliable scores.</div></div>`;
-    document.getElementById('d-output-area').innerHTML=html;
+    html+=`<div class="disclaimer">⚠️ AI detection is probabilistic, not 100% accurate. Use as a guide only. Short texts may produce less reliable scores.</div></div>`;
+    area.innerHTML=html;
     addHistory('detect',txt,`${hPct}% Human / ${aiPct}% AI — ${d.verdict}`);
-  }catch(e){document.getElementById('d-output-area').innerHTML=`<div class="placeholder-msg" style="color:var(--red)">Error: ${escHtml(e.message)}</div>`}
+  }catch(e){area.innerHTML=`<div class="placeholder-msg"><span class="emoji">❌</span>Error: ${escHtml(e.message)}</div>`}
   btn.disabled=false;
 }
 
-// Translate
 async function runTranslate(){
   const txt=document.getElementById('t-input').value.trim();
   if(!txt)return alert('Please paste some text first.');
   if(!selLang)return alert('Please select a target language.');
   const tone=getSelected('trans-tone-chips');
-  const btn=document.getElementById('t-btn');
-  const area=document.getElementById('t-output-area');
-  pushUndo('t',area.innerHTML);
-  btn.disabled=true;showLoader('t-output-area','Translating your text...');
+  const btn=document.getElementById('t-btn'),area=document.getElementById('t-output-area');
+  pushUndo('t',area.innerHTML);btn.disabled=true;
+  showLoader('t-output-area','Translating your text');
   try{
-    const raw=await callClaude(`You are a professional translator. Return ONLY JSON (no markdown):\n{"detected_language":"English","translated":"translated text"}\n\nTarget: ${selLang}\nTone: ${tone}\n\nText:\n${txt}`);
+    const raw=await callClaude(`You are a professional translator. Return ONLY JSON (no markdown): {"detected_language":"English","translated":"translated text"}\n\nTarget: ${selLang}\nTone: ${tone}\n\nText:\n${txt}`);
     const data=JSON.parse(raw.replace(/```json|```/g,'').trim());
     document.getElementById('detected-lang').textContent='Detected: '+(data.detected_language||'Unknown');
-    document.getElementById('t-output-area').innerHTML=`<div class="output-text" id="t-output-text">${escHtml(data.translated)}</div>`;
+    area.innerHTML=`<div class="output-text" id="t-output-text">${escHtml(data.translated)}</div>`;
     document.getElementById('t-out-count').textContent=wordCount(data.translated)+' words';
     addHistory('translate',txt,data.translated);
-  }catch(e){document.getElementById('t-output-area').innerHTML=`<div class="placeholder-msg" style="color:var(--red)">Error: ${escHtml(e.message)}</div>`}
+  }catch(e){area.innerHTML=`<div class="placeholder-msg"><span class="emoji">❌</span>Error: ${escHtml(e.message)}</div>`}
   btn.disabled=false;
 }
 
-// Lang dropdown
-function buildLangDrop(filter=''){
+function buildLangDrop(f=''){
   const dd=document.getElementById('lang-dropdown');
-  const items=LANGS.filter(l=>l.toLowerCase().includes(filter.toLowerCase()));
-  dd.innerHTML=items.map(l=>`<div class="lang-option${l===selLang?' selected':''}" onmousedown="selectLang('${l}')">${l}</div>`).join('');
+  dd.innerHTML=LANGS.filter(l=>l.toLowerCase().includes(f.toLowerCase())).map(l=>`<div class="lang-option${l===selLang?' selected':''}" onmousedown="selectLang('${l}')">${l}</div>`).join('');
 }
 function openLangDrop(){document.getElementById('lang-dropdown').classList.add('open');buildLangDrop(document.getElementById('lang-search').value)}
 function closeLangDrop(){document.getElementById('lang-dropdown').classList.remove('open')}
 function filterLangs(){buildLangDrop(document.getElementById('lang-search').value);document.getElementById('lang-dropdown').classList.add('open')}
-function selectLang(l){selLang=l;document.getElementById('lang-search').value=l;closeLangDrop();buildLangDrop()}
+function selectLang(l){selLang=l;document.getElementById('lang-search').value=l;closeLangDrop()}
 document.getElementById('lang-search').value=selLang;buildLangDrop();
 
-// Copy
 function copyText(id){
   const el=document.getElementById(id);if(!el)return;
-  navigator.clipboard.writeText(el.textContent||el.innerText||'').then(()=>{
-    const t=document.getElementById('copy-toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);
+  navigator.clipboard.writeText(el.textContent||'').then(()=>{
+    const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);
   });
 }
 
-// Export
-function getOutputText(id){const el=document.getElementById(id);return el?(el.textContent||el.innerText||'').trim():''}
+function getOutputText(id){const el=document.getElementById(id);return el?(el.textContent||'').trim():''}
 async function exportDoc(sourceId,filename){
   const txt=getOutputText(sourceId);if(!txt)return alert('No output to export yet.');
   if(typeof docx==='undefined')return alert('Word library not loaded yet.');
   try{
     const{Document,Packer,Paragraph,TextRun,HeadingLevel}=docx;
     const paras=txt.split('\n').filter(l=>l.trim()).map(line=>new Paragraph({children:[new TextRun({text:line,size:24,font:'Calibri'})],spacing:{after:120}}));
-    const doc=new Document({sections:[{properties:{},children:[new Paragraph({text:'HumanizeAI — Export',heading:HeadingLevel.HEADING_1,spacing:{after:200}}),new Paragraph({children:[new TextRun({text:'Generated: '+new Date().toLocaleString(),size:18,color:'999999'})],spacing:{after:300}}),...paras]}]});
+    const doc=new Document({sections:[{properties:{},children:[new Paragraph({text:'Pengu — Export',heading:HeadingLevel.HEADING_1,spacing:{after:200}}),new Paragraph({children:[new TextRun({text:'Generated: '+new Date().toLocaleString(),size:18,color:'999999'})],spacing:{after:300}}),...paras]}]});
     const blob=await Packer.toBlob(doc);
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename+'.docx';a.click();
   }catch(e){alert('Export failed: '+e.message)}
@@ -767,7 +838,7 @@ function exportPDF(sourceId,filename){
     const{jsPDF}=jspdf;
     const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
     const margin=20,pageW=210,maxW=pageW-margin*2;
-    doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(108,99,255);doc.text('HumanizeAI — Export',margin,margin);
+    doc.setFont('helvetica','bold');doc.setFontSize(16);doc.setTextColor(108,99,255);doc.text('Pengu — Export',margin,margin);
     doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(150,150,150);doc.text('Generated: '+new Date().toLocaleString(),margin,margin+7);
     doc.setDrawColor(108,99,255);doc.setLineWidth(.5);doc.line(margin,margin+10,pageW-margin,margin+10);
     doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(30,30,30);
