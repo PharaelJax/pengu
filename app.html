@@ -696,7 +696,10 @@ const API_URL="/api/chat",MAX_TOKENS=4000,WARN_WORDS=800;
 const LANGS=["Afrikaans","Albanian","Amharic","Arabic","Armenian","Azerbaijani","Basque","Bengali","Bosnian","Bulgarian","Catalan","Chinese (Simplified)","Chinese (Traditional)","Croatian","Czech","Danish","Dutch","Esperanto","Estonian","Finnish","French","Galician","Georgian","German","Greek","Gujarati","Haitian Creole","Hausa","Hebrew","Hindi","Hungarian","Icelandic","Indonesian","Irish","Italian","Japanese","Javanese","Kannada","Kazakh","Khmer","Korean","Kurdish","Latin","Latvian","Lithuanian","Macedonian","Malay","Malayalam","Maltese","Maori","Marathi","Mongolian","Nepali","Norwegian","Pashto","Persian","Polish","Portuguese","Punjabi","Romanian","Russian","Samoan","Serbian","Sindhi","Sinhala","Slovak","Slovenian","Somali","Spanish","Swahili","Swedish","Tagalog","Tajik","Tamil","Telugu","Thai","Turkish","Ukrainian","Urdu","Uzbek","Vietnamese","Welsh","Xhosa","Yoruba","Zulu"];
 const TABS={humanize:{t:"🐧 Pengu",s:"Transform AI-generated text into authentic human writing"},paraphrase:{t:"🔄 Paraphraser",s:"Rewrite text in 8 different modes"},summarize:{t:"📋 Summarizer",s:"Condense long text into clear summaries"},proofread:{t:"✅ Proofread",s:"Fix grammar, spelling and clarity instantly"},tts:{t:"🔊 Text to Speech",s:"Hear your text read aloud with natural voices"},detect:{t:"🔍 AI Detector",s:"Find out exactly how human your text sounds"},tone:{t:"🎭 Tone Analyzer",s:"Analyze the emotional tone of any text"},wordcount:{t:"🔢 Word Counter",s:"Detailed statistics for any text"},translate:{t:"🌍 Translate",s:"Translate into 100+ languages with tone control"}};
 
-let selLang="Spanish",isDark=true,origText="",humanizedText="",diffOn=false,ttsUtterance=null,ttsPlaying=false;
+// Auto-detect browser language as default
+const browserLang=navigator.language||navigator.userLanguage||'en';
+const browserLangFull=new Intl.DisplayNames(['en'],{type:'language'}).of(browserLang.split('-')[0]);
+let selLang=LANGS.find(l=>l.toLowerCase().startsWith(browserLangFull?.toLowerCase()))||'Spanish';
 const undoStacks={h:[],p:[],d:[],t:[],para:[],sum:[],tone:[]},redoStacks={h:[],p:[],d:[],t:[],para:[],sum:[],tone:[]};
 let history=[];try{history=JSON.parse(localStorage.getItem('pengu_history')||'[]')}catch(e){}
 
