@@ -397,7 +397,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--red)"></div>AI-Generated Text</div><button class="btn btn-ghost" onclick="clearInput('h-input','h-in-count')">🗑 Clear</button></div>
-          <textarea id="h-input" placeholder="Paste your AI-generated text here...&#10;&#10;💡 Select any portion to humanize just that part."></textarea>
+          <textarea id="h-input" placeholder="Paste your AI-generated text here..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="sel-bar" id="sel-bar"><span>✨ Selection detected</span><button class="btn btn-ghost" style="background:#7B61FF30;border-color:#7B61FF50;color:#a78bfa" onclick="humanizeSelection()">Pengu Selection</button><span id="sel-words" style="margin-left:auto;opacity:.6"></span></div>
           <div class="action-bar"><div class="word-count">📝 <span id="h-in-count">0 words</span></div><div class="readability" id="h-in-stats"></div></div>
         </div>
@@ -440,7 +440,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--p2)"></div>Original Text</div><button class="btn btn-ghost" onclick="clearInput('para-input','para-in-count')">🗑 Clear</button></div>
-          <textarea id="para-input" placeholder="Paste text to paraphrase..."></textarea>
+          <textarea id="para-input" placeholder="Paste text to paraphrase..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="action-bar"><div class="word-count">📝 <span id="para-in-count">0 words</span></div></div>
         </div>
         <div class="card">
@@ -486,7 +486,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--amber)"></div>Original Text</div><button class="btn btn-ghost" onclick="clearInput('sum-input','sum-in-count')">🗑 Clear</button></div>
-          <textarea id="sum-input" placeholder="Paste a long article, essay, or document to summarize..."></textarea>
+          <textarea id="sum-input" placeholder="Paste a long article, essay, or document to summarize..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="action-bar"><div class="word-count">📝 <span id="sum-in-count">0 words</span></div></div>
         </div>
         <div class="card">
@@ -510,7 +510,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--amber)"></div>Original Text</div><button class="btn btn-ghost" onclick="clearInput('p-input','p-in-count')">🗑 Clear</button></div>
-          <textarea id="p-input" placeholder="Paste your text to proofread..."></textarea>
+          <textarea id="p-input" placeholder="Paste your text to proofread..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="action-bar"><div class="word-count">📝 <span id="p-in-count">0 words</span></div></div>
         </div>
         <div class="card">
@@ -555,7 +555,7 @@ body.light .tone-summary{background:#f0f2ff}
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--p2)"></div>Text to Read Aloud</div><button class="btn btn-ghost" onclick="clearInput('tts-input','tts-in-count')">🗑 Clear</button></div>
-        <textarea id="tts-input" placeholder="Paste or type any text to hear it read aloud...&#10;&#10;💡 Works great for proofreading — hearing your text reveals errors your eyes miss!" style="min-height:200px"></textarea>
+        <textarea id="tts-input" placeholder="Paste or type any text to hear it read aloud..." style="width:100%;min-height:200px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
         <div class="action-bar">
           <div class="word-count">📝 <span id="tts-in-count">0 words</span></div>
           <div class="btn-group">
@@ -578,7 +578,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:#a78bfa"></div>Text to Analyze</div><button class="btn btn-ghost" onclick="clearInput('d-input','d-in-count')">🗑 Clear</button></div>
-          <textarea id="d-input" placeholder="Paste text to check if it's AI or human written...&#10;&#10;💡 Best results with 100+ words."></textarea>
+          <textarea id="d-input" placeholder="Paste text to check if it's AI or human written..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="action-bar"><div class="word-count">📝 <span id="d-in-count">0 words</span></div></div>
         </div>
         <div class="card">
@@ -594,7 +594,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:#fbbf24"></div>Text to Analyze</div><button class="btn btn-ghost" onclick="clearInput('tone-input','tone-in-count')">🗑 Clear</button></div>
-          <textarea id="tone-input" placeholder="Paste any text to analyze its emotional tone...&#10;&#10;💡 Works great for emails, essays, marketing copy, or any writing."></textarea>
+          <textarea id="tone-input" placeholder="Paste any text to analyze its emotional tone..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="action-bar"><div class="word-count">📝 <span id="tone-in-count">0 words</span></div></div>
         </div>
         <div class="card">
@@ -609,7 +609,7 @@ body.light .tone-summary{background:#f0f2ff}
     <div class="panel" id="panel-wordcount">
       <div class="card">
         <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--p2)"></div>Your Text</div><button class="btn btn-ghost" onclick="clearWC()">🗑 Clear</button></div>
-        <textarea id="wc-input" placeholder="Paste or type any text to get detailed statistics..." style="min-height:200px" oninput="updateWC()"></textarea>
+        <textarea id="wc-input" placeholder="Paste or type any text to get detailed statistics..." style="width:100%;min-height:200px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none" oninput="updateWC()"></textarea>
       </div>
       <div id="wc-results">
         <div class="wc-grid">
@@ -659,7 +659,7 @@ body.light .tone-summary{background:#f0f2ff}
       <div class="editor-grid">
         <div class="card">
           <div class="card-header"><div class="card-title"><div class="card-dot" style="background:var(--amber)"></div>Source Text</div><span class="detected-badge" id="detected-lang">Auto-detect</span></div>
-          <textarea id="t-input" placeholder="Paste text to translate..."></textarea>
+          <textarea id="t-input" placeholder="Paste text to translate..." style="width:100%;min-height:280px;background:transparent;border:none;outline:none;padding:14px 16px;color:inherit;font-size:14px;line-height:1.8;resize:vertical;font-family:inherit;display:block;box-shadow:none"></textarea>
           <div class="action-bar"><div class="word-count">📝 <span id="t-in-count">0 words</span></div><button class="btn btn-ghost" onclick="clearInput('t-input','t-in-count')">🗑 Clear</button></div>
         </div>
         <div class="card">
