@@ -50,9 +50,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .logo-badge{font-size:9px;color:var(--text3)}
 .sidebar-section{padding:12px 12px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)}
 .sidebar-nav{padding:0 12px;display:flex;flex-direction:column;gap:3px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;color:var(--text3);font-size:13px;font-weight:500;border:1px solid transparent}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;color:var(--text3);font-size:13px;font-weight:500;border:1px solid transparent;position:relative}
 .nav-item:hover{background:var(--glass2);color:var(--text);border-color:var(--border)}
 .nav-item.active{background:linear-gradient(135deg,#7B61FF20,#4F8EF720);color:var(--text);border-color:#7B61FF40}
+.nav-tooltip{position:absolute;left:calc(100% + 10px);top:50%;transform:translateY(-50%);background:#1a1d35;color:#f0f2ff;font-size:12px;font-weight:500;padding:6px 10px;border-radius:var(--radius-xs);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;border:1px solid var(--border2);box-shadow:var(--shadow);z-index:999}
+.nav-tooltip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);border:5px solid transparent;border-right-color:#1a1d35}
+.nav-item:hover .nav-tooltip{opacity:1}
 .nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
 .nav-badge{margin-left:auto;background:var(--grad);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
 .nav-new{margin-left:auto;background:#38D9A920;color:#38D9A9;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;border:1px solid #38D9A940}
@@ -103,7 +106,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 /* EDITOR */
 .editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-textarea{width:100%;min-height:240px;background:transparent;border:none;padding:14px 16px;color:var(--text);font-size:14px;line-height:1.8;resize:vertical;outline:none;font-family:inherit}
 textarea::placeholder{color:var(--text3)}
 .output-text{padding:14px 16px;min-height:240px;font-size:14px;line-height:1.8;color:var(--text);white-space:pre-wrap}
 .action-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-top:1px solid var(--border);flex-wrap:wrap;gap:6px;background:var(--glass)}
@@ -304,25 +306,25 @@ body.light .tone-summary{background:#f0f2ff}
   </div>
   <div class="sidebar-section">Writing Tools</div>
   <div class="sidebar-nav">
-    <div class="nav-item active" onclick="switchTab('humanize')"><span class="nav-icon">🐧</span><span>Pengu</span></div>
-    <div class="nav-item" onclick="switchTab('paraphrase')"><span class="nav-icon">🔄</span><span>Paraphraser</span><span class="nav-new">New</span></div>
-    <div class="nav-item" onclick="switchTab('summarize')"><span class="nav-icon">📋</span><span>Summarizer</span><span class="nav-new">New</span></div>
-    <div class="nav-item" onclick="switchTab('proofread')"><span class="nav-icon">✅</span><span>Proofread</span></div>
-    <div class="nav-item" onclick="switchTab('tts')"><span class="nav-icon">🔊</span><span>Text to Speech</span><span class="nav-new">New</span></div>
+    <div class="nav-item active" onclick="switchTab('humanize')"><span class="nav-icon">🐧</span><span>Pengu</span><div class="nav-tooltip">Humanize AI-generated text</div></div>
+    <div class="nav-item" onclick="switchTab('paraphrase')"><span class="nav-icon">🔄</span><span>Paraphraser</span><span class="nav-new">New</span><div class="nav-tooltip">Rewrite text in 8 different modes</div></div>
+    <div class="nav-item" onclick="switchTab('summarize')"><span class="nav-icon">📋</span><span>Summarizer</span><span class="nav-new">New</span><div class="nav-tooltip">Condense long text into summaries</div></div>
+    <div class="nav-item" onclick="switchTab('proofread')"><span class="nav-icon">✅</span><span>Proofread</span><div class="nav-tooltip">Fix grammar, spelling & clarity</div></div>
+    <div class="nav-item" onclick="switchTab('tts')"><span class="nav-icon">🔊</span><span>Text to Speech</span><span class="nav-new">New</span><div class="nav-tooltip">Hear your text read aloud</div></div>
   </div>
   <div class="sidebar-section">Analysis</div>
   <div class="sidebar-nav">
-    <div class="nav-item" onclick="switchTab('detect')"><span class="nav-icon">🔍</span><span>AI Detect</span></div>
-    <div class="nav-item" onclick="switchTab('tone')"><span class="nav-icon">🎭</span><span>Tone Analyzer</span><span class="nav-new">New</span></div>
-    <div class="nav-item" onclick="switchTab('wordcount')"><span class="nav-icon">🔢</span><span>Word Counter</span><span class="nav-new">New</span></div>
+    <div class="nav-item" onclick="switchTab('detect')"><span class="nav-icon">🔍</span><span>AI Detect</span><div class="nav-tooltip">Check % Human vs AI written</div></div>
+    <div class="nav-item" onclick="switchTab('tone')"><span class="nav-icon">🎭</span><span>Tone Analyzer</span><span class="nav-new">New</span><div class="nav-tooltip">Analyze emotional tone of text</div></div>
+    <div class="nav-item" onclick="switchTab('wordcount')"><span class="nav-icon">🔢</span><span>Word Counter</span><span class="nav-new">New</span><div class="nav-tooltip">Detailed text statistics</div></div>
   </div>
   <div class="sidebar-section">Language</div>
   <div class="sidebar-nav">
-    <div class="nav-item" onclick="switchTab('translate')"><span class="nav-icon">🌍</span><span>Translate</span><span class="nav-badge">100+</span></div>
+    <div class="nav-item" onclick="switchTab('translate')"><span class="nav-icon">🌍</span><span>Translate</span><span class="nav-badge">100+</span><div class="nav-tooltip">Translate into 100+ languages</div></div>
   </div>
   <div class="sidebar-section">Account</div>
   <div class="sidebar-nav">
-    <div class="nav-item" onclick="toggleHistory()"><span class="nav-icon">📜</span><span>History</span><span class="nav-badge" id="hist-count">0</span></div>
+    <div class="nav-item" onclick="toggleHistory()"><span class="nav-icon">📜</span><span>History</span><span class="nav-badge" id="hist-count">0</span><div class="nav-tooltip">View your session history</div></div>
   </div>
   <div class="sidebar-footer">
     <button class="theme-toggle" onclick="toggleTheme()">🌙 <span>Dark mode</span></button>
