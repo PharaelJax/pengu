@@ -630,13 +630,13 @@ let history=[];try{history=JSON.parse(localStorage.getItem('pengu_history')||'[]
 
 // Tab switching
 function switchTab(t){
-  const allTabs=['humanize','paraphrase','summarize','proofread','tts','detect','tone','wordcount','translate'];
   document.querySelectorAll('.nav-item').forEach(el=>{
-    const onclick=el.getAttribute('onclick')||'';
-    el.classList.toggle('active',onclick.includes("'"+t+"'"));
+    const oc=el.getAttribute('onclick')||'';
+    el.classList.toggle('active',oc.includes("'"+t+"'"));
   });
   document.querySelectorAll('.panel').forEach(el=>el.classList.remove('active'));
-  document.getElementById('panel-'+t).classList.add('active');
+  const panel=document.getElementById('panel-'+t);
+  if(panel)panel.classList.add('active');
   if(TABS[t]){document.getElementById('topbar-title').textContent=TABS[t].t;document.getElementById('topbar-sub').textContent=TABS[t].s}
 }
 
@@ -877,10 +877,12 @@ async function runToneAnalyzer(){
   pushUndo('tone',area.innerHTML);btn.disabled=true;
   showLoader('tone-output-area',['🎭 Analyzing tone...','💡 Detecting emotions...','✨ Building breakdown...']);
   try{
-    const raw=await callClaude(`You are an expert tone and sentiment analyst. Analyze the emotional tone of the text and return ONLY JSON (no markdown, no fences):
-{"tones":[{"name":"Confident","emoji":"💪","percentage":35},{"name":"Friendly","emoji":"😊","percentage":25},{"name":"Formal","emoji":"🎩","percentage":20},{"name":"Informative","emoji":"📚","percentage":15},{"name":"Enthusiastic","emoji":"🔥","percentage":5}],"dominant":"Confident","overall_sentiment":"Positive","summary":"2-3 sentence analysis of the overall tone and what it communicates"}
-Choose from these tones as appropriate: Confident, Friendly, Formal, Casual, Aggressive, Empathetic, Enthusiastic, Informative, Persuasive, Humorous, Serious, Anxious, Optimistic, Critical, Neutral. Percentages must add to 100.\n\nText:\n${txt}`);
-    const d=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    const raw=await callClaude(`You are an expert tone and sentiment analyst. Analyze the emotional tone of the text and return ONLY valid JSON (no markdown, no extra text, no code fences). Use exactly this structure:
+{"tones":[{"name":"Confident","emoji":"💪","percentage":35},{"name":"Friendly","emoji":"😊","percentage":25},{"name":"Formal","emoji":"🎩","percentage":20},{"name":"Informative","emoji":"📚","percentage":15},{"name":"Enthusiastic","emoji":"🔥","percentage":5}],"dominant":"Confident","overall_sentiment":"Positive","summary":"2-3 sentence analysis"}
+Rules: percentages must add to exactly 100. Choose 4-6 tones from: Confident, Friendly, Formal, Casual, Aggressive, Empathetic, Enthusiastic, Informative, Persuasive, Humorous, Serious, Anxious, Optimistic, Critical, Neutral. overall_sentiment must be exactly Positive, Negative, or Neutral.\n\nText:\n${txt}`);
+    let d;
+    try{d=JSON.parse(raw.replace(/```json|```/g,'').trim())}catch(e){throw new Error('Could not parse tone analysis. Please try again.')}
+    if(!d.tones||!Array.isArray(d.tones))throw new Error('Invalid response format. Please try again.');
     const sentColor=d.overall_sentiment==='Positive'?'var(--green)':d.overall_sentiment==='Negative'?'var(--red)':'var(--amber)';
     let html=`<div style="padding:16px">`;
     html+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="font-size:18px;font-weight:800;color:var(--text)">Dominant Tone: ${escHtml(d.dominant)}</span><span style="font-size:12px;color:${sentColor};background:${sentColor}20;padding:3px 10px;border-radius:20px;border:1px solid ${sentColor}40">${escHtml(d.overall_sentiment)}</span></div>`;
@@ -896,43 +898,55 @@ Choose from these tones as appropriate: Confident, Friendly, Formal, Casual, Agg
   btn.disabled=false;
 }
 
-// WORD COUNTER (instant, no API needed)
+// Word Counter — division by zero & empty text fixes
 function updateWC(){
   const txt=document.getElementById('wc-input').value;
-  const words=txt.trim()?txt.trim().split(/\s+/).length:0;
+  const wordsArr=txt.trim()?txt.trim().split(/\s+/):[];
+  const words=wordsArr.length;
   const chars=txt.length;
   const charsNo=txt.replace(/\s/g,'').length;
-  const sentences=txt.split(/[.!?]+/).filter(s=>s.trim().length>1).length;
-  const paragraphs=txt.split(/\n\s*\n/).filter(p=>p.trim().length>0).length;
-  const readingTime=Math.ceil(words/238);
-  const speakingTime=Math.ceil(words/150);
-  const uniqueWords=new Set(txt.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w=>w.length>0)).size;
+  const sentences=txt.trim()?txt.split(/[.!?]+/).filter(s=>s.trim().length>1).length:0;
+  const paragraphs=txt.trim()?Math.max(txt.split(/\n\s*\n/).filter(p=>p.trim().length>0).length,1):0;
+  const readingTime=words>0?Math.ceil(words/238):0;
+  const speakingTime=words>0?Math.ceil(words/150):0;
+  const uniqueWords=words>0?new Set(txt.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w=>w.length>0)).size:0;
   document.getElementById('wc-words').textContent=words.toLocaleString();
   document.getElementById('wc-chars').textContent=chars.toLocaleString();
   document.getElementById('wc-chars-no').textContent=charsNo.toLocaleString();
   document.getElementById('wc-sentences').textContent=sentences.toLocaleString();
-  document.getElementById('wc-paragraphs').textContent=Math.max(paragraphs,txt.trim()?1:0);
+  document.getElementById('wc-paragraphs').textContent=paragraphs;
   document.getElementById('wc-reading').textContent=readingTime<1?'<1 min':readingTime+'m';
   document.getElementById('wc-speaking').textContent=speakingTime<1?'<1 min':speakingTime+'m';
   document.getElementById('wc-unique').textContent=uniqueWords.toLocaleString();
-  const fk=fleschKincaid(txt);
-  document.getElementById('wc-readability').innerHTML=fk?`Reading Level: <span style="color:${fk.color};font-weight:600">${fk.grade}</span><br>Avg Sentence: <span style="color:#a78bfa;font-weight:600">${Math.round(words/Math.max(sentences,1))} words</span><br>Avg Word Length: <span style="color:#a78bfa;font-weight:600">${(charsNo/Math.max(words,1)).toFixed(1)} chars</span>`:'<span style="color:var(--text3)">Paste text to see readability stats</span>';
+  const fk=words>10?fleschKincaid(txt):null;
+  const avgSent=sentences>0?Math.round(words/sentences):0;
+  const avgWord=words>0?(charsNo/words).toFixed(1):0;
+  document.getElementById('wc-readability').innerHTML=fk
+    ?`Reading Level: <span style="color:${fk.color};font-weight:600">${fk.grade}</span><br>Avg Sentence: <span style="color:#a78bfa;font-weight:600">${avgSent} words</span><br>Avg Word Length: <span style="color:#a78bfa;font-weight:600">${avgWord} chars</span>`
+    :'<span style="color:var(--text3)">Paste text to see readability stats</span>';
   const wordFreq={};
   txt.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).filter(w=>w.length>3).forEach(w=>{wordFreq[w]=(wordFreq[w]||0)+1});
   const topWords=Object.entries(wordFreq).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  document.getElementById('wc-top-words').innerHTML=topWords.length?topWords.map(([w,c])=>`<span style="color:var(--text)">${w}</span> <span style="color:#a78bfa;font-weight:600">${c}x</span>`).join('  ·  '):'<span style="color:var(--text3)">Paste text to see top words</span>';
+  document.getElementById('wc-top-words').innerHTML=topWords.length
+    ?topWords.map(([w,c])=>`<span style="color:var(--text)">${w}</span> <span style="color:#a78bfa;font-weight:600">${c}x</span>`).join('  ·  ')
+    :'<span style="color:var(--text3)">Paste text to see top words</span>';
 }
 function clearWC(){document.getElementById('wc-input').value='';updateWC()}
 
 // TEXT TO SPEECH
+// TTS Voice Loading — fixed for Chrome
 function loadVoices(){
   const sel=document.getElementById('tts-voice');
-  sel.innerHTML='';
+  if(!sel)return;
   const voices=speechSynthesis.getVoices();
-  if(!voices.length){sel.innerHTML='<option>Loading voices...</option>';return}
+  if(!voices.length){setTimeout(loadVoices,200);return}
+  const prev=sel.value;
+  sel.innerHTML='';
   voices.forEach(v=>{const opt=document.createElement('option');opt.value=v.name;opt.textContent=`${v.name} (${v.lang})`;sel.appendChild(opt)});
+  if(prev)sel.value=prev;
 }
-speechSynthesis.onvoiceschanged=loadVoices;loadVoices();
+if(speechSynthesis.onvoiceschanged!==undefined)speechSynthesis.onvoiceschanged=loadVoices;
+setTimeout(loadVoices,100);
 
 function playTTS(){
   const txt=document.getElementById('tts-input').value.trim();if(!txt)return alert('Please paste some text first.');
